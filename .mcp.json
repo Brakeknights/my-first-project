@@ -10,10 +10,8 @@
   "servers": {
     "hostinger-mcp": {
       "type": "stdio",
-      "command": "npx",
-      "args": [
-        "hostinger-api-mcp@latest"
-      ],
+      "command": "node",
+      "args": ["./node_modules/.bin/hostinger-api-mcp"],
       "env": {
         "API_TOKEN": "${input:api_token}"
       }

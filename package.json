@@ -9,5 +9,8 @@
   },
   "dependencies": {
     "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "hostinger-api-mcp": "^0.2.1"
   }
 }
