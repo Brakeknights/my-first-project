@@ -59,14 +59,11 @@
       height: 68px;
     }
 
-    .logo {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--white);
-      letter-spacing: -0.5px;
+    .logo img {
+      height: 48px;
+      width: auto;
+      display: block;
     }
-
-    .logo span { color: var(--gold); }
 
     nav { display: flex; align-items: center; gap: 4px; }
 
@@ -873,8 +870,12 @@
     }
 
     .footer-brand .logo {
-      font-size: 1.3rem;
       margin-bottom: 14px;
+    }
+
+    .footer-brand .logo img {
+      height: 56px;
+      width: auto;
     }
 
     .footer-brand p {
@@ -960,7 +961,7 @@
 <header>
   <div class="container">
     <div class="header-inner">
-      <a href="#" class="logo">Brake<span>Knights</span></a>
+      <a href="#" class="logo"><img src="/images/logo.png" alt="Brake Knights"></a>
 
       <nav>
         <div class="nav-item">
@@ -1576,7 +1577,7 @@
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <div class="logo">Brake<span>Knights</span></div>
+        <div class="logo"><img src="/images/logo.png" alt="Brake Knights"></div>
         <p>Professional mobile brake service serving all of Northern Virginia. Based in Sterling, we bring the shop to you — no waiting rooms, no surprises, just expert brake work backed by a 12-month warranty.</p>
       </div>
 
