@@ -162,11 +162,11 @@ nav { display: flex; align-items: center; gap: 4px; }
 .hero-bg {
   position: absolute;
   inset: 0;
-  background-image: url('/images/photo2.jpg');
-  background-size: 80%;
+  background-image: url('/images/knight-on-horse.jpg');
+  background-size: 100% auto;
   background-repeat: no-repeat;
-  background-position: center;
-  opacity: 0.18;
+  background-position: center center;
+  opacity: 0.32;
 }
 
 .hero-content { position: relative; z-index: 2; max-width: 680px; padding: 80px 0; }
