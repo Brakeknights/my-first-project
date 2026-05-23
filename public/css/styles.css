@@ -178,12 +178,12 @@ nav { display: flex; align-items: center; gap: 4px; }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: rgba(107,143,245,.15);
-  border: 1px solid rgba(107,143,245,.4);
+  background: rgba(0,0,0,.5);
+  border: 1px solid var(--gold);
   color: var(--gold-light);
-  font-size: .8rem;
-  font-weight: 600;
-  padding: 6px 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 8px 18px;
   border-radius: 20px;
   margin-bottom: 20px;
   text-transform: uppercase;
