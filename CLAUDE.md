@@ -38,14 +38,27 @@ The API token is entered securely at session start — never hardcode it.
 ## Current Work in Progress
 Update this section at the end of each session to stay caught up next time.
 
-- Elfsight Google Reviews carousel added to homepage (`public/index.html`)
-  - Widget ID: `76cf70b9-2bf0-4d45-a110-c5e3b0e7de57`
-  - Configured with dark theme, "What Our Customers Say" header, 3-column layout
-  - Elfsight platform script already in `<head>`: `https://elfsightcdn.com/platform.js`
-- Latest commit: "Add Elfsight Google Reviews carousel to homepage"
 - Working branch: `claude/dreamy-noether-W8Mwi`
-- Elfsight Google Reviews widget is live and working on dev.brakeknights.com ✓
-- Next steps: User to review dev site and approve merging to master when ready.
+- Next steps: User to review dev site and approve feature branch → merge to dev → then master
+
+## To-Do List
+
+### Completed
+- [x] Rebuild homepage
+- [x] Add real photos (hero + why-choose section)
+- [x] Fix colors to royal blue brand
+- [x] Fix warranty language everywhere
+- [x] Build all subpages (about, contact, services, location, legal)
+- [x] Build 6 service detail pages
+- [x] Build 30 location pages
+- [x] Rewrite About page with authentic knight-themed content
+- [x] Add Google Map embed to homepage
+- [x] Add live Google Reviews section to homepage (Elfsight widget, ID: 76cf70b9-2bf0-4d45-a110-c5e3b0e7de57, confirmed working on dev)
+
+### Pending
+- [ ] Upload 5 phone photos and add to site
+- [ ] Perform SEO analysis of master site and recommend improvements
+- [ ] Review and approve feature branch → merge to dev → then master
 
 ## Contact
 greetings@brakeknights.com
