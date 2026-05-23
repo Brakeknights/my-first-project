@@ -3,986 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Brake Knights – Mobile Brake Repair | Northern Virginia</title>
+  <title>Mobile Brake Repair in Sterling, VA | Brake Knights</title>
   <meta name="description" content="Professional mobile brake service in Northern Virginia. We come to you! Brake pad & rotor replacement, caliper repair, fluid flush, and more. Call 703-977-4475.">
+  <link rel="icon" href="/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --navy: #0d1b2a;
-      --navy-mid: #1b2c3e;
-      --blue: #1a4a7a;
-      --blue-light: #2563a8;
-      --gold: #4169e1;
-      --gold-light: #6b8ff5;
-      --red: #c0392b;
-      --white: #ffffff;
-      --off-white: #f7f9fc;
-      --gray-light: #e8edf4;
-      --gray: #6b7a8d;
-      --text: #1a2535;
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      color: var(--text);
-      background: var(--white);
-      line-height: 1.6;
-    }
-
-    a { text-decoration: none; color: inherit; }
-    img { max-width: 100%; display: block; }
-
-    .container {
-      max-width: 1140px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    /* ── HEADER ── */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      overflow: visible;
-      background: var(--navy);
-      box-shadow: 0 2px 12px rgba(0,0,0,.4);
-    }
-
-    .logo {
-      position: relative;
-      z-index: 1001;
-    }
-
-    .header-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 80px;
-    }
-
-    .logo img {
-      height: 180px;
-      width: auto;
-      display: block;
-    }
-
-    nav { display: flex; align-items: center; gap: 4px; }
-
-    .nav-item {
-      position: relative;
-    }
-
-    .nav-link {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      padding: 8px 14px;
-      color: #c8d4e0;
-      font-size: 0.9rem;
-      font-weight: 500;
-      border-radius: 6px;
-      transition: background .15s, color .15s;
-      white-space: nowrap;
-    }
-
-    .nav-link:hover { background: rgba(255,255,255,.08); color: var(--white); }
-
-    .nav-link .caret {
-      font-size: .65rem;
-      opacity: .7;
-      transition: transform .2s;
-    }
-
-    .nav-item:hover .caret { transform: rotate(180deg); }
-
-    .dropdown {
-      display: none;
-      position: absolute;
-      top: calc(100% + 4px);
-      left: 0;
-      min-width: 240px;
-      background: var(--navy-mid);
-      border: 1px solid rgba(255,255,255,.1);
-      border-radius: 8px;
-      padding: 8px 0;
-      box-shadow: 0 12px 32px rgba(0,0,0,.5);
-    }
-
-    .nav-item:hover .dropdown { display: block; }
-
-    .dropdown a {
-      display: block;
-      padding: 9px 20px;
-      color: #b0bec9;
-      font-size: 0.875rem;
-      transition: background .12s, color .12s;
-    }
-
-    .dropdown a:hover {
-      background: rgba(255,255,255,.07);
-      color: var(--white);
-    }
-
-    .header-cta {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .fb-link {
-      color: #90a4b8;
-      font-size: .85rem;
-      transition: color .15s;
-    }
-
-    .fb-link:hover { color: #4a90d9; }
-
-    .btn-call {
-      background: var(--gold);
-      color: var(--navy);
-      font-weight: 700;
-      font-size: .9rem;
-      padding: 10px 20px;
-      border-radius: 8px;
-      transition: background .15s, transform .1s;
-      white-space: nowrap;
-    }
-
-    .btn-call:hover {
-      background: var(--gold-light);
-      transform: translateY(-1px);
-    }
-
-    /* mobile hamburger */
-    .hamburger {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      padding: 8px;
-    }
-
-    .hamburger span {
-      display: block;
-      width: 24px;
-      height: 2px;
-      background: var(--white);
-      border-radius: 2px;
-    }
-
-    /* ── HERO ── */
-    #hero {
-      position: relative;
-      min-height: 540px;
-      display: flex;
-      align-items: center;
-      background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
-      overflow: hidden;
-    }
-
-    .hero-bg {
-      position: absolute;
-      inset: 0;
-      background-image: url('/images/photo2.jpg');
-      background-size: 80%;
-      background-repeat: no-repeat;
-      background-position: center;
-      opacity: 0.18;
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      max-width: 680px;
-      padding: 80px 0;
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(232,160,32,.15);
-      border: 1px solid rgba(232,160,32,.4);
-      color: var(--gold-light);
-      font-size: .8rem;
-      font-weight: 600;
-      padding: 6px 14px;
-      border-radius: 20px;
-      margin-bottom: 20px;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-    }
-
-    .hero-content h1 {
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
-      font-weight: 800;
-      color: var(--white);
-      line-height: 1.2;
-      margin-bottom: 20px;
-    }
-
-    .hero-content p {
-      font-size: 1.1rem;
-      color: #b8cce0;
-      margin-bottom: 32px;
-      max-width: 560px;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-    }
-
-    .btn-primary {
-      background: var(--gold);
-      color: var(--navy);
-      font-weight: 700;
-      font-size: 1rem;
-      padding: 14px 28px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      transition: background .15s, transform .1s;
-    }
-
-    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
-
-    .btn-outline {
-      background: transparent;
-      color: var(--white);
-      font-weight: 600;
-      font-size: 1rem;
-      padding: 14px 28px;
-      border-radius: 8px;
-      border: 2px solid rgba(255,255,255,.3);
-      cursor: pointer;
-      transition: border-color .15s, background .15s;
-    }
-
-    .btn-outline:hover { border-color: var(--white); background: rgba(255,255,255,.08); }
-
-    /* ── VALUE PROPS ── */
-    #value-props {
-      background: var(--white);
-      padding: 64px 0;
-      border-bottom: 1px solid var(--gray-light);
-    }
-
-    .props-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 32px;
-    }
-
-    .prop-card {
-      text-align: center;
-      padding: 36px 28px;
-      border-radius: 12px;
-      border: 1px solid var(--gray-light);
-      transition: box-shadow .2s, transform .2s;
-    }
-
-    .prop-card:hover {
-      box-shadow: 0 8px 32px rgba(26,74,122,.12);
-      transform: translateY(-4px);
-    }
-
-    .prop-icon {
-      font-size: 2.5rem;
-      margin-bottom: 16px;
-    }
-
-    .prop-card h3 {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 12px;
-    }
-
-    .prop-card p {
-      color: var(--gray);
-      font-size: .925rem;
-      line-height: 1.7;
-    }
-
-    /* ── SECTION COMMON ── */
-    section { padding: 72px 0; }
-
-    .section-label {
-      font-size: .8rem;
-      font-weight: 700;
-      color: var(--blue-light);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 12px;
-    }
-
-    .section-title {
-      font-size: clamp(1.5rem, 3vw, 2.2rem);
-      font-weight: 800;
-      color: var(--navy);
-      line-height: 1.25;
-      margin-bottom: 16px;
-    }
-
-    .section-sub {
-      font-size: 1rem;
-      color: var(--gray);
-      max-width: 600px;
-      margin-bottom: 48px;
-    }
-
-    /* ── CONTACT FORM ── */
-    #contact {
-      background: var(--navy);
-      color: var(--white);
-    }
-
-    #contact .section-title { color: var(--white); }
-    #contact .section-sub { color: #8fa8c0; }
-    #contact .section-label { color: var(--gold-light); }
-
-    .contact-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 64px;
-      align-items: start;
-    }
-
-    .contact-form {
-      background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.1);
-      border-radius: 16px;
-      padding: 40px;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 16px;
-    }
-
-    .form-group label {
-      font-size: .85rem;
-      font-weight: 600;
-      color: #90a8c0;
-    }
-
-    .form-group input,
-    .form-group textarea {
-      background: rgba(255,255,255,.08);
-      border: 1px solid rgba(255,255,255,.15);
-      color: var(--white);
-      font-family: inherit;
-      font-size: .95rem;
-      padding: 12px 14px;
-      border-radius: 8px;
-      outline: none;
-      transition: border-color .15s;
-    }
-
-    .form-group input::placeholder,
-    .form-group textarea::placeholder { color: #506070; }
-
-    .form-group input:focus,
-    .form-group textarea:focus {
-      border-color: var(--gold);
-    }
-
-    .form-group textarea { resize: vertical; min-height: 100px; }
-
-    .form-legal {
-      font-size: .78rem;
-      color: #607080;
-      margin-top: 12px;
-      line-height: 1.6;
-    }
-
-    .form-legal a { color: var(--gold-light); }
-
-    .contact-info h3 {
-      font-size: 1.4rem;
-      font-weight: 700;
-      margin-bottom: 24px;
-    }
-
-    .contact-detail {
-      display: flex;
-      align-items: flex-start;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .contact-detail-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 10px;
-      background: rgba(255,255,255,.08);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      flex-shrink: 0;
-    }
-
-    .contact-detail-text strong {
-      display: block;
-      font-size: .85rem;
-      color: #8fa8c0;
-      margin-bottom: 2px;
-    }
-
-    .contact-detail-text a,
-    .contact-detail-text span {
-      color: var(--white);
-      font-size: 1rem;
-      font-weight: 500;
-    }
-
-    .hours-grid {
-      background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.1);
-      border-radius: 12px;
-      padding: 20px;
-      margin-top: 24px;
-    }
-
-    .hours-grid h4 {
-      font-size: .9rem;
-      color: var(--gold-light);
-      margin-bottom: 12px;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-    }
-
-    .hours-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 6px 0;
-      font-size: .9rem;
-      border-bottom: 1px solid rgba(255,255,255,.05);
-    }
-
-    .hours-row:last-child { border-bottom: none; }
-
-    .hours-row .day { color: #8fa8c0; }
-
-    /* ── PROCESS ── */
-    #process { background: var(--off-white); }
-
-    .process-steps {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-    }
-
-    .process-step {
-      display: flex;
-      gap: 24px;
-      align-items: flex-start;
-      position: relative;
-      padding-bottom: 40px;
-    }
-
-    .process-step:last-child { padding-bottom: 0; }
-
-    .step-line {
-      position: absolute;
-      left: 28px;
-      top: 56px;
-      bottom: 0;
-      width: 2px;
-      background: var(--gray-light);
-    }
-
-    .process-step:last-child .step-line { display: none; }
-
-    .step-number {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: var(--navy);
-      color: var(--white);
-      font-size: 1.1rem;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      position: relative;
-      z-index: 1;
-    }
-
-    .step-content { padding-top: 12px; }
-
-    .step-content h3 {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 6px;
-    }
-
-    .step-content p {
-      color: var(--gray);
-      font-size: .925rem;
-    }
-
-    /* ── WHY CHOOSE ── */
-    #why-choose { background: var(--white); }
-
-    .why-layout {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 48px;
-      align-items: center;
-    }
-
-    .why-photo {
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 12px 40px rgba(0,0,0,.15);
-    }
-
-    .why-photo img {
-      width: 100%;
-      height: 480px;
-      object-fit: cover;
-      display: block;
-    }
-
-    .why-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
-
-    .why-card {
-      padding: 32px;
-      border-radius: 12px;
-      border: 1px solid var(--gray-light);
-      display: flex;
-      gap: 20px;
-    }
-
-    .why-icon {
-      width: 52px;
-      height: 52px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--blue), var(--blue-light));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      flex-shrink: 0;
-    }
-
-    .why-card h3 {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 8px;
-    }
-
-    .why-card p {
-      color: var(--gray);
-      font-size: .9rem;
-    }
-
-    /* ── SERVICES ── */
-    #services { background: var(--off-white); }
-
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-    }
-
-    .service-card {
-      background: var(--white);
-      border-radius: 12px;
-      padding: 28px;
-      border: 1px solid var(--gray-light);
-      transition: box-shadow .2s, transform .2s;
-    }
-
-    .service-card:hover {
-      box-shadow: 0 8px 28px rgba(26,74,122,.1);
-      transform: translateY(-3px);
-    }
-
-    .service-card h3 {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 10px;
-    }
-
-    .service-card p {
-      color: var(--gray);
-      font-size: .9rem;
-      line-height: 1.65;
-    }
-
-    .service-icon {
-      font-size: 2rem;
-      margin-bottom: 14px;
-    }
-
-    /* ── WARNINGS ── */
-    #warnings {
-      background: linear-gradient(135deg, #7b1515 0%, var(--red) 100%);
-      color: var(--white);
-    }
-
-    #warnings .section-title { color: var(--white); }
-    #warnings .section-sub { color: rgba(255,255,255,.75); }
-    #warnings .section-label { color: #ffaaaa; }
-
-    .warnings-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-
-    .warning-item {
-      background: rgba(0,0,0,.2);
-      border: 1px solid rgba(255,255,255,.15);
-      border-radius: 10px;
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .warning-item span {
-      font-size: 1.4rem;
-    }
-
-    .warning-item p {
-      font-size: .9rem;
-      font-weight: 500;
-    }
-
-    /* ── PRICING ── */
-    #pricing { background: var(--white); }
-
-    .pricing-table {
-      width: 100%;
-      border-collapse: collapse;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0,0,0,.08);
-    }
-
-    .pricing-table th {
-      background: var(--navy);
-      color: var(--white);
-      padding: 18px 24px;
-      text-align: left;
-      font-size: .9rem;
-      font-weight: 600;
-    }
-
-    .pricing-table th:first-child { width: 40%; }
-
-    .pricing-table td {
-      padding: 16px 24px;
-      font-size: .95rem;
-      border-bottom: 1px solid var(--gray-light);
-    }
-
-    .pricing-table tr:last-child td { border-bottom: none; }
-
-    .pricing-table tbody tr:nth-child(even) { background: var(--off-white); }
-
-    .price-highlight { color: var(--blue); font-weight: 700; }
-
-    .best-price {
-      color: #1a7a3a;
-      font-weight: 800;
-      background: #e8f7ec;
-      border-radius: 6px;
-      padding: 4px 10px;
-    }
-
-    /* ── AREAS ── */
-    #areas { background: var(--off-white); }
-
-    .areas-cols {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 48px;
-      align-items: start;
-    }
-
-    .area-list {
-      columns: 2;
-      gap: 8px;
-    }
-
-    .area-list li {
-      list-style: none;
-      padding: 5px 0;
-      color: var(--gray);
-      font-size: .9rem;
-      break-inside: avoid;
-    }
-
-    .area-list li::before {
-      content: "📍 ";
-      font-size: .8rem;
-    }
-
-    .zip-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: .875rem;
-    }
-
-    .zip-table th {
-      text-align: left;
-      padding: 8px 12px;
-      background: var(--gray-light);
-      font-weight: 600;
-      color: var(--navy);
-      border-radius: 4px;
-    }
-
-    .zip-table td {
-      padding: 7px 12px;
-      border-bottom: 1px solid var(--gray-light);
-      color: var(--gray);
-    }
-
-    .zip-table tr:last-child td { border-bottom: none; }
-
-    /* ── FAQ ── */
-    #faq { background: var(--white); }
-
-    .faq-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      border: 1px solid var(--gray-light);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-
-    .faq-item {
-      border-bottom: 1px solid var(--gray-light);
-    }
-
-    .faq-item:last-child { border-bottom: none; }
-
-    .faq-question {
-      width: 100%;
-      text-align: left;
-      padding: 20px 24px;
-      background: none;
-      border: none;
-      font-family: inherit;
-      font-size: .975rem;
-      font-weight: 600;
-      color: var(--navy);
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      transition: background .12s;
-    }
-
-    .faq-question:hover { background: var(--off-white); }
-
-    .faq-question.open { background: var(--off-white); }
-
-    .faq-chevron {
-      font-size: .75rem;
-      color: var(--gray);
-      transition: transform .25s;
-      flex-shrink: 0;
-    }
-
-    .faq-question.open .faq-chevron { transform: rotate(180deg); }
-
-    .faq-answer {
-      display: none;
-      padding: 0 24px 20px;
-      color: var(--gray);
-      font-size: .925rem;
-      line-height: 1.7;
-    }
-
-    .faq-answer.open { display: block; }
-
-    /* ── NO SHOP ── */
-    #no-shop { background: var(--navy); color: var(--white); }
-    #no-shop .section-title { color: var(--white); }
-    #no-shop .section-sub { color: #8fa8c0; }
-    #no-shop .section-label { color: var(--gold-light); }
-
-    .no-shop-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 40px;
-    }
-
-    .no-shop-col h4 {
-      font-size: .875rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      margin-bottom: 20px;
-    }
-
-    .no-shop-col.no-more h4 { color: #ff8888; }
-    .no-shop-col.instead h4 { color: #7de87d; }
-
-    .no-shop-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .no-shop-list li {
-      list-style: none;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: .95rem;
-      color: #b0c4d8;
-    }
-
-    .no-shop-col.no-more .no-shop-list li::before {
-      content: "✗";
-      color: #ff6b6b;
-      font-weight: 700;
-      font-size: 1rem;
-      flex-shrink: 0;
-    }
-
-    .no-shop-col.instead .no-shop-list li::before {
-      content: "✓";
-      color: #5dd85d;
-      font-weight: 700;
-      font-size: 1rem;
-      flex-shrink: 0;
-    }
-
-    /* ── FOOTER ── */
-    footer {
-      background: #060d14;
-      color: #6b7a8d;
-      padding: 48px 0 24px;
-    }
-
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr 1fr;
-      gap: 48px;
-      margin-bottom: 40px;
-    }
-
-    .footer-brand .logo {
-      margin-bottom: 14px;
-    }
-
-    .footer-brand .logo img {
-      height: 287px;
-      width: auto;
-    }
-
-    .footer-brand p {
-      font-size: .875rem;
-      line-height: 1.7;
-      color: #4a5a6a;
-    }
-
-    .footer-col h4 {
-      font-size: .85rem;
-      font-weight: 700;
-      color: #90a4b8;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      margin-bottom: 16px;
-    }
-
-    .footer-col ul { list-style: none; }
-
-    .footer-col ul li {
-      margin-bottom: 8px;
-    }
-
-    .footer-col ul li a {
-      color: #4a5a6a;
-      font-size: .875rem;
-      transition: color .15s;
-    }
-
-    .footer-col ul li a:hover { color: #90a4b8; }
-
-    .footer-bottom {
-      border-top: 1px solid #111c26;
-      padding-top: 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .footer-bottom p { font-size: .8rem; }
-
-    .footer-links {
-      display: flex;
-      gap: 20px;
-    }
-
-    .footer-links a {
-      font-size: .8rem;
-      color: #4a5a6a;
-      transition: color .15s;
-    }
-
-    .footer-links a:hover { color: #90a4b8; }
-
-    /* ── MOBILE ── */
-    @media (max-width: 900px) {
-      nav, .fb-link { display: none; }
-      .hamburger { display: flex; }
-      .logo img { height: auto; width: 120px; max-width: none; }
-      .props-grid { grid-template-columns: 1fr; }
-      .contact-grid { grid-template-columns: 1fr; gap: 40px; }
-      .services-grid { grid-template-columns: repeat(2, 1fr); }
-      .why-layout { grid-template-columns: 1fr; }
-      .why-photo { display: none; }
-      .warnings-grid { grid-template-columns: 1fr 1fr; }
-      .no-shop-grid { grid-template-columns: 1fr; gap: 32px; }
-      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
-      .areas-cols { grid-template-columns: 1fr; }
-    }
-
-    @media (max-width: 620px) {
-      .services-grid { grid-template-columns: 1fr; }
-      .warnings-grid { grid-template-columns: 1fr; }
-      .form-row { grid-template-columns: 1fr; }
-      .hero-content { padding: 60px 0; }
-      .pricing-table th, .pricing-table td { padding: 12px 14px; }
-    }
-  </style>
+  <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
 
@@ -990,60 +16,53 @@
 <header>
   <div class="container">
     <div class="header-inner">
-      <a href="#" class="logo"><img src="/images/logo.png" alt="Brake Knights"></a>
+      <a href="/" class="logo"><img src="/images/logo.png" alt="Brake Knights"></a>
 
       <nav>
         <div class="nav-item">
-          <a href="#" class="nav-link">Home</a>
+          <a href="/" class="nav-link active">Home</a>
         </div>
 
         <div class="nav-item">
-          <a href="#services" class="nav-link">Services <span class="caret">▾</span></a>
+          <a href="/services" class="nav-link">Services <span class="caret">▾</span></a>
           <div class="dropdown">
-            <a href="#services">Brake Pad &amp; Rotor Replacement</a>
-            <a href="#services">Brake Caliper Repair or Replacement</a>
-            <a href="#services">Drum Brake Replacement</a>
-            <a href="#services">Brake Hose Replacement</a>
-            <a href="#services">Brake Fluid Flush</a>
-            <a href="#services">Brake Inspection</a>
+            <a href="/brake-pad-rotor-replacement">Brake Pad &amp; Rotor Replacement</a>
+            <a href="/brake-caliper-repair-replacement">Brake Caliper Repair or Replacement</a>
+            <a href="/drum-brake-shoe-replacement">Drum Brake &amp; Shoe Replacement</a>
+            <a href="/brake-hose-replacement">Brake Hose Replacement</a>
+            <a href="/brake-fluid-flush">Brake Fluid Flush</a>
+            <a href="/brake-inspection">Brake Inspection</a>
           </div>
         </div>
 
         <div class="nav-item">
-          <a href="#why-choose" class="nav-link">About</a>
+          <a href="/about" class="nav-link">About</a>
         </div>
 
         <div class="nav-item">
-          <a href="#contact" class="nav-link">Contact</a>
+          <a href="/contact" class="nav-link">Contact</a>
         </div>
 
         <div class="nav-item">
-          <a href="#areas" class="nav-link">Location <span class="caret">▾</span></a>
+          <a href="/location" class="nav-link">Location <span class="caret">▾</span></a>
           <div class="dropdown">
-            <a href="#areas">Sterling</a>
-            <a href="#areas">Herndon</a>
-            <a href="#areas">Ashburn</a>
-            <a href="#areas">Dulles</a>
-            <a href="#areas">Chantilly</a>
-            <a href="#areas">Reston</a>
-            <a href="#areas">Great Falls</a>
-            <a href="#areas">Leesburg</a>
-            <a href="#areas">Purcellville</a>
-            <a href="#areas">McLean</a>
-            <a href="#areas">Vienna</a>
-            <a href="#areas">Tysons Corner</a>
-            <a href="#areas">Falls Church</a>
-            <a href="#areas">Centreville</a>
-            <a href="#areas">Gainesville</a>
-            <a href="#areas">Haymarket</a>
-            <a href="#areas">Manassas</a>
-            <a href="#areas">Aldie</a>
-            <a href="#areas">Arlington</a>
-            <a href="#areas">Alexandria</a>
-            <a href="#areas">Lansdowne</a>
-            <a href="#areas">Broadlands</a>
-            <a href="#areas">South Riding</a>
-            <a href="#areas">Brambleton</a>
+            <a href="/brake-repair-sterling">Sterling</a>
+            <a href="/brake-repair-herndon">Herndon</a>
+            <a href="/brake-repair-ashburn">Ashburn</a>
+            <a href="/brake-repair-dulles">Dulles</a>
+            <a href="/brake-repair-chantilly">Chantilly</a>
+            <a href="/brake-repair-reston">Reston</a>
+            <a href="/brake-repair-great-falls">Great Falls</a>
+            <a href="/brake-repair-leesburg">Leesburg</a>
+            <a href="/brake-repair-mclean">McLean</a>
+            <a href="/brake-repair-vienna">Vienna</a>
+            <a href="/brake-repair-tysons">Tysons Corner</a>
+            <a href="/brake-repair-falls-church">Falls Church</a>
+            <a href="/brake-repair-centreville">Centreville</a>
+            <a href="/brake-repair-manassas">Manassas</a>
+            <a href="/brake-repair-arlington">Arlington</a>
+            <a href="/brake-repair-alexandria">Alexandria</a>
+            <a href="/location">View All Areas →</a>
           </div>
         </div>
       </nav>
@@ -1187,7 +206,7 @@
 
           <p class="form-legal">
             By submitting you consent to receive SMS messages from Brake Knights regarding your service request. Standard messaging rates may apply.
-            View our <a href="#" onclick="return false;">Privacy Policy</a> and <a href="#" onclick="return false;">Terms &amp; Conditions</a>.
+            View our <a href="/privacy-policy">Privacy Policy</a> and <a href="/terms-and-conditions">Terms &amp; Conditions</a>.
           </p>
         </form>
       </div>
@@ -1258,39 +277,39 @@
     <p class="section-sub">Four commitments that set our mobile brake service apart from every traditional shop in Northern Virginia.</p>
 
     <div class="why-layout">
-    <div class="why-photo">
-      <img src="/images/photo1.jpg" alt="Brake Knights technician at work">
-    </div>
-    <div class="why-grid">
-      <div class="why-card">
-        <div class="why-icon">🏅</div>
-        <div>
-          <h3>Expert ASE-Certified Knights</h3>
-          <p>Our technicians bring decades of combined experience and thousands of successful brake repairs. Every knight on our team is trained to the highest standard.</p>
+      <div class="why-photo">
+        <img src="/images/photo1.jpg" alt="Brake Knights technician at work">
+      </div>
+      <div class="why-grid">
+        <div class="why-card">
+          <div class="why-icon">🏅</div>
+          <div>
+            <h3>Expert ASE-Certified Knights</h3>
+            <p>Our technicians bring decades of combined experience and thousands of successful brake repairs. Every knight on our team is trained to the highest standard.</p>
+          </div>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">💰</div>
+          <div>
+            <h3>Transparent Pricing</h3>
+            <p>No hidden fees. No surprise charges. You get a clear, upfront estimate before any work begins — and that's exactly what you pay.</p>
+          </div>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">🛡️</div>
+          <div>
+            <h3>12-Month Warranty</h3>
+            <p>Brake pad and rotor set replacements using parts we supply are backed by a 12-month warranty on parts and labor. Pad-only replacements and customer-supplied parts are not covered.</p>
+          </div>
+        </div>
+        <div class="why-card">
+          <div class="why-icon">🚗</div>
+          <div>
+            <h3>Mobile Convenience</h3>
+            <p>We come to your home, office, or any location in Northern Virginia. No rentals, no waiting rooms, no disruption to your day.</p>
+          </div>
         </div>
       </div>
-      <div class="why-card">
-        <div class="why-icon">💰</div>
-        <div>
-          <h3>Transparent Pricing</h3>
-          <p>No hidden fees. No surprise charges. You get a clear, upfront estimate before any work begins — and that's exactly what you pay.</p>
-        </div>
-      </div>
-      <div class="why-card">
-        <div class="why-icon">🛡️</div>
-        <div>
-          <h3>12-Month Warranty</h3>
-          <p>Brake pad and rotor set replacements using parts we supply are backed by a 12-month warranty on parts and labor. Pad-only replacements and customer-supplied parts are not covered.</p>
-        </div>
-      </div>
-      <div class="why-card">
-        <div class="why-icon">🚗</div>
-        <div>
-          <h3>Mobile Convenience</h3>
-          <p>We come to your home, office, or any location in Northern Virginia. No rentals, no waiting rooms, no disruption to your day.</p>
-        </div>
-      </div>
-    </div>
     </div>
   </div>
 </section>
@@ -1307,31 +326,37 @@
         <div class="service-icon">🔧</div>
         <h3>Brake Pad &amp; Rotor Replacement</h3>
         <p>Worn brake pads and damaged rotors reduce stopping power and create dangerous driving conditions. We replace both components with high-quality parts, restoring full braking performance.</p>
+        <a href="/brake-pad-rotor-replacement" class="learn-more">Learn more →</a>
       </div>
       <div class="service-card">
         <div class="service-icon">⚙️</div>
         <h3>Brake Caliper Repair &amp; Replacement</h3>
         <p>Sticking or leaking calipers cause uneven braking, vehicle pulling, and premature pad wear. We diagnose, rebuild, or replace calipers to restore balanced stopping power.</p>
+        <a href="/brake-caliper-repair-replacement" class="learn-more">Learn more →</a>
       </div>
       <div class="service-card">
         <div class="service-icon">🥁</div>
         <h3>Drum Brake &amp; Shoe Replacement</h3>
         <p>Rear drum brake systems need regular attention. We adjust or replace brake shoes, springs, and wheel cylinders to keep your rear brakes performing at their best.</p>
+        <a href="/drum-brake-shoe-replacement" class="learn-more">Learn more →</a>
       </div>
       <div class="service-card">
         <div class="service-icon">💧</div>
         <h3>Brake Hose Replacement</h3>
         <p>Cracked or damaged brake hoses disrupt fluid flow and compromise system pressure. We inspect and replace hoses to maintain proper hydraulic operation.</p>
+        <a href="/brake-hose-replacement" class="learn-more">Learn more →</a>
       </div>
       <div class="service-card">
         <div class="service-icon">🧪</div>
         <h3>Brake Fluid Flush Service</h3>
         <p>Over time, brake fluid absorbs moisture and degrades. Our flush service removes contaminated fluid, prevents internal corrosion, and restores optimal braking feel.</p>
+        <a href="/brake-fluid-flush" class="learn-more">Learn more →</a>
       </div>
       <div class="service-card">
         <div class="service-icon">🔍</div>
         <h3>Professional Brake Inspection &amp; Diagnosis</h3>
         <p>Our $60 comprehensive inspection checks pads, rotors, calipers, hoses, and fluid levels. You'll receive a full written report with honest, no-pressure recommendations.</p>
+        <a href="/brake-inspection" class="learn-more">Learn more →</a>
       </div>
     </div>
   </div>
@@ -1418,37 +443,36 @@
   <div class="container">
     <div class="section-label">Service Territory</div>
     <h2 class="section-title">We Serve All of Northern Virginia</h2>
-    <p class="section-sub">Based in Sterling — covering Loudoun, Fairfax, Prince William, Arlington, and Alexandria.</p>
+    <p class="section-sub">Based in Sterling — covering Loudoun, Fairfax, Prince William, Arlington, and Alexandria. <a href="/location" style="color:var(--gold);font-weight:600;">View all service areas →</a></p>
 
     <div class="areas-cols">
       <div>
         <h3 style="font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:20px;">Primary Service Areas</h3>
         <ul class="area-list">
-          <li>Sterling</li>
-          <li>Herndon</li>
-          <li>Ashburn</li>
-          <li>Dulles</li>
-          <li>Lansdowne</li>
-          <li>Broadlands</li>
-          <li>Brambleton</li>
-          <li>South Riding</li>
-          <li>Chantilly</li>
-          <li>Reston</li>
-          <li>Great Falls</li>
-          <li>Dulles Town Center</li>
-          <li>Purcellville</li>
-          <li>Leesburg</li>
-          <li>Aldie</li>
-          <li>Centreville</li>
-          <li>Vienna</li>
-          <li>McLean</li>
-          <li>Tysons Corner</li>
-          <li>Falls Church</li>
-          <li>Haymarket</li>
-          <li>Gainesville</li>
-          <li>Manassas</li>
-          <li>Arlington</li>
-          <li>Alexandria</li>
+          <li><a href="/brake-repair-sterling" style="color:var(--gray);">Sterling</a></li>
+          <li><a href="/brake-repair-herndon" style="color:var(--gray);">Herndon</a></li>
+          <li><a href="/brake-repair-ashburn" style="color:var(--gray);">Ashburn</a></li>
+          <li><a href="/brake-repair-dulles" style="color:var(--gray);">Dulles</a></li>
+          <li><a href="/brake-repair-lansdowne" style="color:var(--gray);">Lansdowne</a></li>
+          <li><a href="/brake-repair-broadlands" style="color:var(--gray);">Broadlands</a></li>
+          <li><a href="/brake-repair-brambleton" style="color:var(--gray);">Brambleton</a></li>
+          <li><a href="/brake-repair-south-riding" style="color:var(--gray);">South Riding</a></li>
+          <li><a href="/brake-repair-chantilly" style="color:var(--gray);">Chantilly</a></li>
+          <li><a href="/brake-repair-reston" style="color:var(--gray);">Reston</a></li>
+          <li><a href="/brake-repair-great-falls" style="color:var(--gray);">Great Falls</a></li>
+          <li><a href="/brake-repair-purcellville" style="color:var(--gray);">Purcellville</a></li>
+          <li><a href="/brake-repair-leesburg" style="color:var(--gray);">Leesburg</a></li>
+          <li><a href="/brake-repair-aldie" style="color:var(--gray);">Aldie</a></li>
+          <li><a href="/brake-repair-centreville" style="color:var(--gray);">Centreville</a></li>
+          <li><a href="/brake-repair-vienna" style="color:var(--gray);">Vienna</a></li>
+          <li><a href="/brake-repair-mclean" style="color:var(--gray);">McLean</a></li>
+          <li><a href="/brake-repair-tysons" style="color:var(--gray);">Tysons Corner</a></li>
+          <li><a href="/brake-repair-falls-church" style="color:var(--gray);">Falls Church</a></li>
+          <li><a href="/brake-repair-haymarket" style="color:var(--gray);">Haymarket</a></li>
+          <li><a href="/brake-repair-gainesville" style="color:var(--gray);">Gainesville</a></li>
+          <li><a href="/brake-repair-manassas" style="color:var(--gray);">Manassas</a></li>
+          <li><a href="/brake-repair-arlington" style="color:var(--gray);">Arlington</a></li>
+          <li><a href="/brake-repair-alexandria" style="color:var(--gray);">Alexandria</a></li>
         </ul>
       </div>
 
@@ -1618,22 +642,22 @@
       <div class="footer-col">
         <h4>Services</h4>
         <ul>
-          <li><a href="#services">Brake Pad &amp; Rotor Replacement</a></li>
-          <li><a href="#services">Caliper Repair &amp; Replacement</a></li>
-          <li><a href="#services">Drum Brake &amp; Shoe Replacement</a></li>
-          <li><a href="#services">Brake Hose Replacement</a></li>
-          <li><a href="#services">Brake Fluid Flush</a></li>
-          <li><a href="#services">Brake Inspection ($60)</a></li>
+          <li><a href="/brake-pad-rotor-replacement">Brake Pad &amp; Rotor Replacement</a></li>
+          <li><a href="/brake-caliper-repair-replacement">Caliper Repair &amp; Replacement</a></li>
+          <li><a href="/drum-brake-shoe-replacement">Drum Brake &amp; Shoe Replacement</a></li>
+          <li><a href="/brake-hose-replacement">Brake Hose Replacement</a></li>
+          <li><a href="/brake-fluid-flush">Brake Fluid Flush</a></li>
+          <li><a href="/brake-inspection">Brake Inspection ($60)</a></li>
         </ul>
       </div>
 
       <div class="footer-col">
         <h4>Company</h4>
         <ul>
-          <li><a href="#why-choose">About Us</a></li>
-          <li><a href="#areas">Service Areas</a></li>
-          <li><a href="#faq">FAQ</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/location">Service Areas</a></li>
+          <li><a href="/#faq">FAQ</a></li>
+          <li><a href="/contact">Contact</a></li>
           <li><a href="https://www.facebook.com/brakeknights" target="_blank" rel="noopener">Facebook</a></li>
           <li><a href="tel:7039774475">703-977-4475</a></li>
         </ul>
@@ -1643,8 +667,8 @@
     <div class="footer-bottom">
       <p>© 2025 Brake Knights. All rights reserved.</p>
       <div class="footer-links">
-        <a href="#" onclick="return false;">Privacy Policy</a>
-        <a href="#" onclick="return false;">Terms and Conditions</a>
+        <a href="/privacy-policy">Privacy Policy</a>
+        <a href="/terms-and-conditions">Terms and Conditions</a>
       </div>
     </div>
   </div>
@@ -1654,7 +678,6 @@
   function toggleFaq(btn) {
     const answer = btn.nextElementSibling;
     const isOpen = btn.classList.contains('open');
-    // close all
     document.querySelectorAll('.faq-question.open').forEach(q => {
       q.classList.remove('open');
       q.nextElementSibling.classList.remove('open');
@@ -1668,14 +691,13 @@
   function handleSubmit(e) {
     e.preventDefault();
     const btn = e.target.querySelector('[type=submit]');
-    btn.textContent = 'Request Sent! We\'ll be in touch soon.';
+    btn.textContent = "Request Sent! We'll be in touch soon.";
     btn.style.background = '#1a7a3a';
     btn.style.color = '#fff';
     btn.disabled = true;
   }
 
   function toggleMenu(el) {
-    // mobile nav placeholder — expand as needed
     el.classList.toggle('active');
   }
 </script>
