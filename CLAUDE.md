@@ -56,29 +56,21 @@ Update this section at the end of each session to stay caught up next time.
   3. Fix About page on mobile: background photo too large, font too large and blurry
   4. Feature branch ready for review → merge to dev → then master
 
-## Master To-Do List
-⚠️ This is the single source of truth. Update it every time an item is completed or added.
+## To-Do List
+⚠️ Single source of truth. Update every time an item is completed or added.
 
-### Immediate Action Required (User)
-- [ ] Set `SMTP_PASS` environment variable in Hostinger hPanel → Hosting → Manage → Node.js → Environment Variables (value = greetings@brakeknights.com email password)
-
-### Quick Fixes
+### Pending
+- [ ] Set `SMTP_PASS` env var in Hostinger hPanel → Hosting → Manage → Node.js → Environment Variables (value = greetings@brakeknights.com email password) — **user action required**
 - [ ] Fix stale links: `/brake-repair-fairfax` → `/brake-repair-fairfax-city` on 8 pages (Vienna, Centreville, Burke, Springfield, Merrifield, Fairfax Station, Clifton, Location page)
 - [ ] Fix broken links to deleted pages — Springfield & Alexandria pages link to `/brake-repair-lorton`; Manassas links to `/brake-repair-dale-city`
 - [ ] Fix Services page footer — missing `mailto:` link on email address
-
-### Decisions Needed
-- [ ] Hero badge style — Option A (dark backdrop, gold text) or Option B (solid gold bg, navy text)? Option B is currently on the feature branch
-- [ ] Van photo — need a hosted image URL to add to homepage hero
+- [ ] Hero badge style — Option A (dark backdrop, gold text) or Option B (solid gold bg, navy text)? Option B is currently on the feature branch — **decision needed**
+- [ ] Van photo — need a hosted image URL to add to homepage hero — **decision needed**
 - [ ] About page mobile fix — background photo too large, text blurry and too large on mobile
-
-### Bigger Builds
 - [ ] Automated customer confirmation email — branded reply sent to customer on form submission (confirm receipt, booking details)
 - [ ] Automated quote system — vehicle tier pricing, auto-stop rules, quote delivery via email (tabled — pricing structure discussion ready to resume)
 - [ ] Homepage hero CTA redesign — user has specific vision; discuss before building
 - [ ] Upload 5 phone photos and add to the site
-
-### Branch & Deployment
 - [ ] Approve feature branch (`claude/stoic-maxwell-n9CYe`) → merge to dev → then master
 
 ### Completed
