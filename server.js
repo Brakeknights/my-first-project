@@ -48,6 +48,11 @@ app.post('/api/contact', async (req, res) => {
     </div>
   `;
 
+  if (!process.env.SMTP_PASS) {
+    console.error('SMTP_PASS environment variable is not set');
+    return res.status(500).json({ success: false, error: 'Email not configured' });
+  }
+
   try {
     await transporter.sendMail({
       from: '"Brake Knights Website" <greetings@brakeknights.com>',
@@ -58,7 +63,7 @@ app.post('/api/contact', async (req, res) => {
     });
     res.json({ success: true });
   } catch (err) {
-    console.error('Email send error:', err.message);
+    console.error('Email send error:', err.code, err.message);
     res.status(500).json({ success: false, error: 'Failed to send email' });
   }
 });
