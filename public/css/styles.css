@@ -174,9 +174,10 @@ nav { display: flex; align-items: center; gap: 4px; }
 .hero-van {
   position: absolute;
   right: 0;
-  bottom: 0;
-  height: 85%;
-  width: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50%;
+  height: auto;
   opacity: 0.55;
   z-index: 1;
   pointer-events: none;
