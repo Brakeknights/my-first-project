@@ -365,6 +365,7 @@ section { padding: 72px 0; }
 
 /* ── PROCESS ── */
 .process-section { background: var(--off-white); }
+.process-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
 .process-steps { display: flex; flex-direction: column; }
 .process-step { display: flex; gap: 24px; align-items: flex-start; position: relative; padding-bottom: 40px; }
 .process-step:last-child { padding-bottom: 0; }
@@ -525,6 +526,7 @@ footer { background: #060d14; color: #6b7a8d; padding: 48px 0 24px; }
   .service-detail-grid { grid-template-columns: 1fr; }
   .service-sidebar { position: static; }
   .about-grid { grid-template-columns: 1fr; }
+  .process-grid { grid-template-columns: 1fr; gap: 32px; }
   .location-counties { grid-template-columns: repeat(2, 1fr); }
   .area-list-3col { columns: 2; }
 
