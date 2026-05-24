@@ -84,7 +84,7 @@ app.post('/api/contact', async (req, res) => {
         <!-- What to expect -->
         <p style="color:#0a1f3d;font-weight:bold;margin:0 0 10px;font-size:0.95rem;">What happens next?</p>
         <ol style="color:#444;line-height:1.8;margin:0 0 24px;padding-left:20px;font-size:0.9rem;">
-          <li>We'll review your message and reach out by call or text to discuss your service and provide a quote.</li>
+          <li>We'll review your message and reach out by phone, text, or email to discuss your service and provide a quote.</li>
           <li>Once you're happy with the quote, we'll schedule a time and location that works for you.</li>
           <li>Our knight comes to you — fully equipped, no shop visit needed.</li>
         </ol>
