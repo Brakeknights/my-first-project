@@ -47,39 +47,41 @@ THE WORKFLOW IS:
 
 There is NO shortcut. There is NO exception. Not even "just a small fix."
 ASKING "should I push to dev?" IS NOT ENOUGH — wait for the user to say it.
-- Current feature branch: `claude/gallant-edison-TMDeb`
+- Current feature branch: `claude/stoic-wozniak-PuzTh`
 
 ## Current Work in Progress
 Update this section at the end of each session to stay caught up next time.
 
-- Working branch: `claude/gallant-edison-TMDeb` (also `claude/awesome-wright-cEFDs` — same code)
+- Working branch: `claude/stoic-wozniak-PuzTh`
 - `dev` branch is live at dev.brakeknights.com — auto-deploys on every push to `dev` ✅
-- Form emails fully working: internal notification + customer confirmation ✅
-- Next steps:
-  1. About page mobile fix — background photo too large, text blurry on mobile
-  2. Hero CTA redesign — user has specific vision, discuss before building
-  3. Upload 5 phone photos and add to site
-  4. Once all approved → merge to master
+- QA sweep in progress before merging to master — several fixes already pushed to dev
+- PreToolUse hook added to block accidental pushes to dev (system-enforced)
+- Session-start hook updated to install Playwright browser on remote sessions
 
 ## To-Do List
 ⚠️ Single source of truth. Update every time an item is completed or added.
 
-### Pending
-- [ ] About page mobile fix — background photo too large, text blurry and too large on mobile
+### Pending (QA Sweep — do before merging to master)
+- [ ] Services submenu on mobile — likely same dropdown clipping bug as Location (quick fix)
+- [ ] Contact form — end-to-end submission test
+- [ ] Location pages — verify nearby area links (previously fixed, spot-check)
+- [ ] Footer — verify links, mailto, tel across all pages
+- [ ] About page mobile fix — background photo too large, text blurry on mobile
 - [ ] Homepage hero CTA redesign — user has specific vision; discuss before building
 - [ ] Upload 5 phone photos and add to the site
-- [ ] Automated quote system — vehicle tier pricing, auto-stop rules, quote delivery via email (tabled — pricing structure discussion ready to resume)
-- [ ] Merge dev → master (once remaining items complete)
+- [ ] Automated quote system — vehicle tier pricing, auto-stop rules (tabled — resume when ready)
+- [ ] Merge dev → master (once all QA items complete and user approves)
 
 ### Completed This Session
-- [x] Hero subtitle size — settled at 2.6rem
-- [x] Van hero background on mobile — decided to keep hidden (16:9 image doesn't suit portrait mobile)
-- [x] `dev` git branch set up — Hostinger auto-deploys from it, Node 22, stable
-- [x] Fix deployment reversion — added `engines: node>=22` to package.json, exclude `.claude/` from archive
-- [x] Set `SMTP_PASS` env var in Hostinger hPanel ✅
-- [x] Contact form emails working — internal notification to greetings@brakeknights.com
-- [x] Customer confirmation email — branded, quote inquiry framing, tested working both ways
-- [x] Subject line — removed phone number, now just "New Service Request: First Last"
+- [x] Mobile Location dropdown — fixed max-height clipping (Tysons, McLean, View All were hidden)
+- [x] "View All Areas →" button — added back to Location nav in all 45 pages
+- [x] iOS home bar buffer — 60px padding so last nav item never hidden behind home bar
+- [x] `100dvh` fix — mobile nav now uses dynamic viewport height instead of `100vh`
+- [x] "Get Free Estimate" → "Request Service" — renamed across all 41 pages
+- [x] `--gold` CSS vars renamed to `--royal-blue` / `--royal-blue-light` (they were always blue)
+- [x] "How It Works" mobile layout — was two-column (squished), now single column with heading stacked above steps
+- [x] PreToolUse hook — blocks git push/merge to dev without explicit user approval
+- [x] Session-start hook — updated to also install Playwright Chromium browser
 
 ### Previously Completed
 - [x] Van photo added to homepage hero — `/images/van.jpg`, 16:9 crop, cover sizing, 18% opacity, hidden on mobile
