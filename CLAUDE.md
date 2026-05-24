@@ -65,13 +65,22 @@ Update this section at the end of each session to stay caught up next time.
 ⚠️ Single source of truth. Update every time an item is completed or added.
 
 ### Pending
-- [ ] About page mobile fix — background photo too large, text blurry and too large on mobile
-- [ ] Homepage hero CTA redesign — user has specific vision; discuss before building
+- [ ] About hero armor stamp — user wants the favicon icon to appear as a 3D embossed/imprinted crest on the armor background, like a wax seal or stamp pressed into metal. User has a reference photo on their computer to share next session. Current placeholder effect is in place (soft-light blend mode) but needs to match the reference image.
+- [ ] Homepage hero CTA redesign — user has a specific vision not yet described; discuss before building
 - [ ] Upload 5 phone photos and add to the site
 - [ ] Automated quote system — vehicle tier pricing, auto-stop rules, quote delivery via email (tabled — pricing structure discussion ready to resume)
 - [ ] Merge dev → master (once remaining items complete)
 
 ### Completed This Session
+- [x] About page mobile fix — reduced tale-section title (64px→2.4rem) and body text on mobile, pushed to dev
+- [x] Remove "written report" references — scrubbed from 35 files site-wide, pushed to dev
+- [x] Replace all emojis with Font Awesome icons — 27 emoji types replaced across 45 files, FA served locally
+- [x] Fix all em dashes site-wide — replaced with correct punctuation (colon, comma, semicolon, period) in all content; title separators left intact
+- [x] Hero badge icon — using favicon.png (helmet + rotor logo icon) instead of chess knight or emoji
+- [x] Fix btn-secondary missing CSS — "Request Service" button was unstyled on all service pages
+- [x] Fix hero CTA button text — "Call 703-977-4475" → "Call Us" on all service pages (number belongs in header only)
+
+### Previously Completed This Session
 - [x] Hero subtitle size — settled at 2.6rem
 - [x] Van hero background on mobile — decided to keep hidden (16:9 image doesn't suit portrait mobile)
 - [x] `dev` git branch set up — Hostinger auto-deploys from it, Node 22, stable
