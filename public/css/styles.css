@@ -83,6 +83,8 @@ nav { display: flex; align-items: center; gap: 4px; }
   top: calc(100% + 4px);
   left: 0;
   min-width: 240px;
+  max-height: 70vh;
+  overflow-y: auto;
   background: var(--navy-mid);
   border: 1px solid rgba(255,255,255,.1);
   border-radius: 8px;
