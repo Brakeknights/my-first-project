@@ -7,3 +7,4 @@ fi
 
 cd "$CLAUDE_PROJECT_DIR"
 npm install
+npx playwright install chromium --with-deps
