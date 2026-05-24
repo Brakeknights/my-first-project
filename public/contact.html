@@ -399,13 +399,38 @@
     });
     if (!isOpen) { btn.classList.add('open'); answer.classList.add('open'); }
   }
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const btn = e.target.querySelector('[type=submit]');
-    btn.textContent = "Request Sent! We'll be in touch soon.";
-    btn.style.background = '#1a7a3a';
-    btn.style.color = '#fff';
+    btn.textContent = 'Sending…';
     btn.disabled = true;
+    const data = {
+      firstName: document.getElementById('first-name')?.value,
+      lastName:  document.getElementById('last-name')?.value,
+      phone:     document.getElementById('phone')?.value,
+      email:     document.getElementById('email')?.value,
+      vehicle:   document.getElementById('vehicle')?.value,
+      message:   document.getElementById('message')?.value,
+      source:    window.location.pathname
+    };
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (res.ok) {
+        btn.textContent = "Request Sent! We'll be in touch soon.";
+        btn.style.background = '#1a7a3a';
+        btn.style.color = '#fff';
+      } else {
+        throw new Error('Server error');
+      }
+    } catch (err) {
+      btn.textContent = 'Submit Your Request';
+      btn.disabled = false;
+      alert('Something went wrong. Please call us directly at 703-977-4475.');
+    }
   }
   function toggleMenu(el) {
     el.classList.toggle('active');
