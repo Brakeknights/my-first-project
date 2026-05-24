@@ -56,7 +56,30 @@ Update this section at the end of each session to stay caught up next time.
   3. Fix About page on mobile: background photo too large, font too large and blurry
   4. Feature branch ready for review → merge to dev → then master
 
-## To-Do List
+## Master To-Do List
+⚠️ This is the single source of truth. Update it every time an item is completed or added.
+
+### Immediate Action Required (User)
+- [ ] Set `SMTP_PASS` environment variable in Hostinger hPanel → Hosting → Manage → Node.js → Environment Variables (value = greetings@brakeknights.com email password)
+
+### Quick Fixes
+- [ ] Fix stale links: `/brake-repair-fairfax` → `/brake-repair-fairfax-city` on 8 pages (Vienna, Centreville, Burke, Springfield, Merrifield, Fairfax Station, Clifton, Location page)
+- [ ] Fix broken links to deleted pages — Springfield & Alexandria pages link to `/brake-repair-lorton`; Manassas links to `/brake-repair-dale-city`
+- [ ] Fix Services page footer — missing `mailto:` link on email address
+
+### Decisions Needed
+- [ ] Hero badge style — Option A (dark backdrop, gold text) or Option B (solid gold bg, navy text)? Option B is currently on the feature branch
+- [ ] Van photo — need a hosted image URL to add to homepage hero
+- [ ] About page mobile fix — background photo too large, text blurry and too large on mobile
+
+### Bigger Builds
+- [ ] Automated customer confirmation email — branded reply sent to customer on form submission (confirm receipt, booking details)
+- [ ] Automated quote system — vehicle tier pricing, auto-stop rules, quote delivery via email (tabled — pricing structure discussion ready to resume)
+- [ ] Homepage hero CTA redesign — user has specific vision; discuss before building
+- [ ] Upload 5 phone photos and add to the site
+
+### Branch & Deployment
+- [ ] Approve feature branch (`claude/stoic-maxwell-n9CYe`) → merge to dev → then master
 
 ### Completed
 - [x] Rebuild homepage
@@ -75,19 +98,7 @@ Update this section at the end of each session to stay caught up next time.
 - [x] Context usage indicator — confirmed built-in (small circle, bottom-right, hover to see %)
 - [x] Fix Location nav dropdown: trimmed to 10 cities (Purcellville first), removed "View All Areas" button (Safari overlap bug)
 - [x] Sync areaServed schema across all 45 pages to match current 32-city service area
-
-### Pending
-- [ ] Decide on hero badge style (Option A vs B)
-- [ ] Add van photo to homepage hero (need direct image URL)
-- [ ] Fix About page on mobile: background photo too large, font too large and blurry
-- [ ] Upload 5 phone photos and add to site
-- [ ] Fix contact form — wire to actually send emails to greetings@brakeknights.com (Formspree, EmailJS, or Hostinger SMTP — decide on method)
-- [ ] Fix stale nearby-area links: /brake-repair-fairfax → /brake-repair-fairfax-city (Vienna, Centreville, Burke, Springfield, Merrifield, Fairfax Station, Clifton)
-- [ ] Fix stale links to deleted pages: Springfield & Alexandria → lorton, Manassas → dale-city
-- [ ] Fix Services page footer missing mailto: email link
-- [ ] BIG FEATURE: Automated customer email response on contact form submission (confirm receipt, include booking details, branded reply)
-- [ ] Homepage hero CTA redesign (big build — user has specific vision, discuss before implementing)
-- [ ] Review and approve feature branch → merge to dev → then master
+- [x] Wire contact forms to send email via nodemailer/Hostinger SMTP — both index.html and contact.html POST to /api/contact; server.js sends branded HTML email to greetings@brakeknights.com
 
 ## Contact
 greetings@brakeknights.com
