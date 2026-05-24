@@ -1,3 +1,13 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css');
+
+.fa-solid, .fa-brands { vertical-align: -0.1em; }
+.btn-primary .fa-solid, .btn-primary .fa-brands,
+.btn-secondary .fa-solid, .btn-secondary .fa-brands,
+.btn-outline .fa-solid, .btn-outline .fa-brands,
+.btn-call .fa-solid, .btn-call .fa-brands,
+.fb-link .fa-brands,
+.header-cta .fa-solid { margin-right: 5px; }
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
