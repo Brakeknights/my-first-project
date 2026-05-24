@@ -210,6 +210,13 @@ nav { display: flex; align-items: center; gap: 4px; }
   text-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 
+.hero-subtitle {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 12px;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+}
 .hero-content p { font-size: 1.15rem; color: #dce8f5; margin-bottom: 32px; max-width: 560px; text-shadow: 0 1px 4px rgba(0,0,0,0.3); }
 .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
 
