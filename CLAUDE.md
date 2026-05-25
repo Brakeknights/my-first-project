@@ -59,6 +59,41 @@ Update this section at the end of each session to stay caught up next time.
   1. Upload 5 phone photos and add to site
   2. Once all approved → merge to master
 
+## Pre-Launch Checklist (Before Merging to Master)
+
+### Functional
+- [ ] Submit a test contact form on dev — confirm internal notification arrives at greetings@brakeknights.com
+- [ ] Submit a test contact form on dev — confirm customer confirmation email arrives
+- [ ] Click every nav link (desktop + mobile) — no 404s
+- [ ] Click every footer link — no 404s
+- [ ] Test mobile hamburger menu on a real phone — opens, closes, submenus expand/collapse
+
+### Content Accuracy
+- [ ] Phone number (703-977-4475) in header and footer — correct
+- [ ] Phone number does NOT appear inside CTA buttons (buttons should say "Call Us" only)
+- [ ] Service area list on site matches the actual 32 cities served
+- [ ] Legal pages (privacy policy, terms) — no placeholder or dummy text
+
+### Visual / Rendering
+- [ ] Spot-check homepage on mobile — layout, text size, images all correct
+- [ ] Spot-check one service page on mobile — buttons styled, no broken layout
+- [ ] Spot-check one location page on mobile — looks correct
+- [ ] Font Awesome icons rendering correctly (not blank boxes) on all page types
+- [ ] Google Reviews widget showing on homepage
+
+### Technical
+- [ ] Browser console on homepage — no JS errors
+- [ ] Canonical tags point to `brakeknights.com` (not `dev.brakeknights.com`)
+- [ ] `sitemap.xml` exists and lists all major pages
+- [ ] `robots.txt` exists and is correct
+
+### SEO
+- [ ] Homepage title tag and meta description are accurate and unique
+- [ ] About, Contact, Services pages have unique titles and meta descriptions
+- [ ] Homepage JSON-LD schema passes Google's Rich Results Test
+
+---
+
 ## To-Do List
 ⚠️ Single source of truth. Update every time an item is completed or added.
 
