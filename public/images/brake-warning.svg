@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">
-  <!-- Left outer arc (left side, 9 o'clock, ~160deg span) -->
-  <path d="M 10.35 21.35 A 9.5 9.5 0 0 1 10.35 2.65" stroke="black" stroke-width="2.2" stroke-linecap="round"/>
-  <!-- Right outer arc (right side, 3 o'clock, ~160deg span) -->
-  <path d="M 13.65 2.65 A 9.5 9.5 0 0 1 13.65 21.35" stroke="black" stroke-width="2.2" stroke-linecap="round"/>
+  <!-- Left outer arc (~100deg span, centered on 9 o'clock) -->
+  <path d="M 5.89 19.28 A 9.5 9.5 0 0 1 5.89 4.72" stroke="black" stroke-width="2.2" stroke-linecap="round"/>
+  <!-- Right outer arc (~100deg span, centered on 3 o'clock) -->
+  <path d="M 18.11 4.72 A 9.5 9.5 0 0 1 18.11 19.28" stroke="black" stroke-width="2.2" stroke-linecap="round"/>
   <!-- Inner circle -->
   <circle cx="12" cy="12" r="5.5" stroke="black" stroke-width="2"/>
   <!-- Exclamation body -->
