@@ -47,17 +47,38 @@ THE WORKFLOW IS:
 
 There is NO shortcut. There is NO exception. Not even "just a small fix."
 ASKING "should I push to dev?" IS NOT ENOUGH — wait for the user to say it.
-- Current feature branch: `claude/determined-euler-N4DKp`
+- Current feature branch: `claude/pensive-bell-ssjun`
+
+## Hook-Enforced Branch Guard
+A PreToolUse hook at `.claude/hooks/guard-dev-master.sh` HARD-BLOCKS any
+`git commit`, `git merge`, or `git push` targeting `dev` or `master`.
+This is enforced by Claude Code — Claude cannot bypass it.
+
+To approve a dev push: type **"go dev"** in your message. A UserPromptSubmit
+hook at `.claude/hooks/approve-dev-push.sh` writes a one-shot token that
+the guard consumes on the next dev-targeted git operation. The token is
+deleted after one use.
+
+- Scope: dev only. Master is NEVER bypassable by token — always requires
+  the user to run the git command themselves.
+- Lifetime: one-shot. Each "go dev" approves exactly one operation.
+- `git push --all` / `--mirror` are blocked unconditionally.
 
 ## Current Work in Progress
 Update this section at the end of each session to stay caught up next time.
 
-- Working branch: `claude/determined-euler-N4DKp`
+- Working branch: `claude/pensive-bell-ssjun`
 - `dev` branch is live at dev.brakeknights.com — auto-deploys on every push to `dev` ✅
 - Form emails fully working: internal notification + customer confirmation ✅
+- iOS "Allow Phone" dialog fix shipped: format-detection meta on all 45 pages,
+  E.164 tel: links, Google Maps iframes converted to click-to-load on
+  index.html and contact.html (Maps was holding session-level tel: permission state) ✅
+- Branch guard system live: hard hook blocks dev/master ops; "go dev"
+  keyword grants one-shot dev approval ✅
 - Next steps:
-  1. Upload 5 phone photos and add to site
-  2. Once all approved → merge to master
+  1. Verify on real iPhone that the "Allow Phone" dialog no longer appears
+  2. Upload 5 phone photos and add to site
+  3. Once all approved → merge to master
 
 ## Pre-Launch Checklist (Before Merging to Master)
 
@@ -99,11 +120,16 @@ Update this section at the end of each session to stay caught up next time.
 ⚠️ Single source of truth. Update every time an item is completed or added.
 
 ### Pending
+- [ ] Verify on real iPhone: "Allow Phone" dialog no longer appears (test header, hero, footer, bare phone numbers across multiple pages)
 - [ ] Upload 5 phone photos and add to the site
 - [ ] Automated quote system — vehicle tier pricing, auto-stop rules, quote delivery via email (tabled — pricing structure discussion ready to resume)
 - [ ] Merge dev → master (once remaining items complete)
 
 ### Completed This Session
+- [x] iOS "Allow Phone" dialog fix — three layers: format-detection meta on all 45 pages, all 229 tel: links upgraded to E.164 (`tel:+17039774475`), bare phone number text wrapped in proper tel: anchors on 5 pages
+- [x] iOS Maps fix — Google Maps iframes on index.html and contact.html replaced with click-to-load placeholder (Maps was holding session-level tel: permission state from parent domain)
+- [x] PreToolUse hook — `.claude/hooks/guard-dev-master.sh` hard-blocks `git commit`/`merge`/`push` targeting dev or master (with `strip_quoted()` to avoid false positives in commit message bodies)
+- [x] UserPromptSubmit hook — `.claude/hooks/approve-dev-push.sh` watches user messages for "go dev" and writes a one-shot approval token; guard consumes the token on next dev op
 - [x] About hero armor stamp — removed from scope
 - [x] Homepage hero CTA redesign — removed from scope
 - [x] About page mobile fix — reduced tale-section title (64px→2.4rem) and body text on mobile, pushed to dev
