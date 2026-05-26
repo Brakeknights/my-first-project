@@ -59,12 +59,11 @@ Update this section at the end of each session to stay caught up next time.
 - Working branch: `claude/amazing-goodall-b5XE9`
 - `dev` branch is live at dev.brakeknights.com — auto-deploys on every push to `dev` ✅
 - Form emails fully working: internal notification + customer confirmation ✅
-- **WARNING: dev branch is ahead of the feature branch.** Several changes were committed directly to `dev` this session (steering wheel icon base64 fix, photo swap, price table, hours footer, image compression, mobile header centering, icon updates). The feature branch does NOT have these commits. Before new work, sync the feature branch: `git checkout claude/amazing-goodall-b5XE9 && git merge dev`
+- Feature branch is in sync with dev ✅
 - Pre-push hook in place — direct pushes to `master` are now blocked at the git level ✅
 - Next steps:
-  1. Sync feature branch with dev (see warning above)
-  2. Remaining pre-launch checklist items (see below)
-  3. Once all approved → merge to master via GitHub UI (direct push is now blocked)
+  1. Remaining pre-launch checklist items (see below)
+  2. Once all approved → merge to master via GitHub UI (direct push is now blocked)
 
 ## Pre-Launch Checklist (Before Merging to Master)
 
@@ -106,23 +105,15 @@ Update this section at the end of each session to stay caught up next time.
 ⚠️ Single source of truth. Update every time an item is completed or added.
 
 ### Pending
-- [ ] Sync feature branch with dev: `git checkout claude/amazing-goodall-b5XE9 && git merge dev`
-- [ ] Add "View All Service Areas" CTA button to homepage hero section — links to the locations/cities page
-- [ ] Change "Hours of Operation" heading to "Hours of Valor" on all pages that show it (footer + any standalone section)
-- [ ] Remaining pre-launch checklist items (see below)
+- [ ] Remaining pre-launch checklist items (see above)
 - [ ] Merge dev → master via GitHub UI (once all checklist items complete)
 - [ ] Automated quote system — vehicle tier pricing, auto-stop rules, quote delivery via email (tabled — pricing structure discussion ready to resume)
 
 ### Completed This Session
-- [x] Fix steering wheel icon not rendering on desktop — switched mask-image from URL-encoded to base64 data URI; deployed to dev
-- [x] Add pre-push hook (.githooks/pre-push) — blocks direct pushes to master at git level
-- [x] Add session startup checklist to CLAUDE.md
-- [x] Fix brake warning icon on iOS Safari — switched from URL mask-image to inline data URI; deployed to dev
-- [x] Swap homepage tech photo to gray shirt photo (photo2.jpg); deployed to dev
-- [x] Update homepage price comparison table — "Starting at $X" format, corrected wait times (Dealer 3–5hr, Shop 2–4hr, BK 1–1.5hr); deployed to dev
-- [x] Compress all images for faster mobile load (ImageMagick, max 1600px, quality 82); deployed to dev
-- [x] Add hours of operation column to footer on all 45 pages; deployed to dev
-- [x] Hide Elfsight widget built-in title on mobile; deployed to dev
+- [x] Change "Hours of Operation" to "Hours of Valor" across all 45 pages; deployed to dev
+- [x] Add "View All Service Areas" button to homepage hero; deployed to dev
+- [x] Add "Our Reviews" star icon to desktop header on all 45 pages — links to Google Maps business profile; deployed to dev
+- [x] Rotate brembo-caliper.jpeg 90° clockwise on the What We Do section; deployed to dev
 - [x] Center call button in mobile header; deployed to dev
 - [x] Remove Facebook icon from mobile header entirely; deployed to dev
 - [x] Change Hours of Operation icon from chess knight to clock (fa-clock); deployed to dev
