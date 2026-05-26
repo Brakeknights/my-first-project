@@ -566,7 +566,9 @@ footer { background: #060d14; color: #6b7a8d; padding: 48px 0 24px; }
 
 /* ── MOBILE ── */
 @media (max-width: 900px) {
-  nav, .fb-link { display: none; }
+  nav { display: none; }
+  .fb-link { font-size: 0; }
+  .fb-link .fa-brands { font-size: 1.1rem; }
   .hamburger { display: flex; }
   .logo img { height: auto; width: 120px; max-width: none; }
   .header-inner { justify-content: space-between; }
