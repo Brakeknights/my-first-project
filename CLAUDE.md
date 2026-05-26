@@ -1,5 +1,9 @@
 # Brakeknights Project
 
+## Session Startup Checklist (Run These First, Every Session)
+1. `git config core.hooksPath .githooks` — activates the master push block
+2. `git branch --show-current` — confirm you are on `claude/amazing-goodall-b5XE9` (or the current feature branch); if not, switch: `git checkout claude/amazing-goodall-b5XE9`
+
 ## Overview
 Website and customer portal for Brakeknights (brakeknights.com).
 Built with Node.js/Express, deployed on Hostinger.
