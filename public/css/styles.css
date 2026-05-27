@@ -685,6 +685,7 @@ footer { background: #060d14; color: #6b7a8d; padding: 48px 0 24px; }
   .services-grid { grid-template-columns: 1fr; }
   .warnings-grid { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
+  #hero { min-height: unset; }
   .hero-content { padding: 60px 0; }
   .pricing-table th, .pricing-table td { padding: 12px 14px; }
   .location-counties { grid-template-columns: 1fr; }
