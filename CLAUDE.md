@@ -65,9 +65,10 @@ Update this section at the end of each session to stay caught up next time.
 - Pre-push hook in place — direct pushes to `master` are now blocked at the git level ✅
 - Images and CSS now served with `Cache-Control: no-cache` — stale browser cache is a solved problem ✅
 - CSS version is at `?v=3` across all 45 pages
+- **Pre-launch checklist: ALL ITEMS COMPLETE** ✅
 - Next steps:
-  1. Finish remaining pre-launch checklist items (2 remaining — see below)
-  2. Once all approved, merge to master via GitHub UI (direct push is now blocked)
+  1. Final review on dev.brakeknights.com (contact form, JSON-LD via Google Rich Results Test, browser console)
+  2. Merge dev → master via GitHub UI when approved
 
 ## Pre-Launch Checklist (Before Merging to Master)
 
@@ -109,17 +110,16 @@ Update this section at the end of each session to stay caught up next time.
 ⚠️ Single source of truth. Update every time an item is completed or added.
 
 ### Pending
-- [x] Homepage JSON-LD schema passes Google's Rich Results Test
-- [ ] Merge dev → master via GitHub UI (once all checklist items complete)
+- [ ] Final review on dev.brakeknights.com before merging to master (contact form, JSON-LD Rich Results Test, console check)
+- [ ] Merge dev → master via GitHub UI
 - [ ] Automated quote system — vehicle tier pricing, auto-stop rules, quote delivery via email (tabled — pricing structure discussion ready to resume)
 
 ### Completed This Session
+- [x] Rotate rotor-caliper.jpeg 90 degrees clockwise on brake inspection page
 - [x] Fix homepage area list: added 8 missing cities (Annandale, Burke, Springfield, Oakton, Merrifield, Fairfax City, Fairfax Station, Clifton)
 - [x] Fix JSON-LD schema: moved Brake Inspection price to outer Offer, added image property to AutoRepair schema
-- [x] Increase mobile hero photo opacity from 0.18 to 0.35
-- [x] Fix mobile homepage hero background-size to cover, matching location pages
-- [x] Remove min-height on homepage hero for mobile to match location page zoom level
-- [x] Mark mobile hamburger menu, homepage mobile, service page mobile, and location page mobile spot-checks as verified
+- [x] Increase mobile hero photo opacity to 0.35, background-size to cover, remove forced min-height on mobile
+- [x] Complete all pre-launch checklist items
 
 ### Previously Completed
 - [x] Add 3 worn rotor photos to brake pad/rotor replacement page (5-photo grid, 3-column layout); deployed to dev
