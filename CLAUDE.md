@@ -4,6 +4,10 @@
 1. `git config core.hooksPath .githooks` — activates the master push block
 2. `git branch --show-current` — confirm you are on `claude/loving-cerf-c6lME` (or the current feature branch); if not, switch: `git checkout claude/loving-cerf-c6lME`
 
+## Master Push Override
+The pre-push hook blocks all pushes to master by default.
+To override: user says **"go master"** in chat. Claude then runs the push with `MASTER_OVERRIDE="go master"` set as an env var.
+
 ## Overview
 Website and customer portal for Brakeknights (brakeknights.com).
 Built with Node.js/Express, deployed on Hostinger.
