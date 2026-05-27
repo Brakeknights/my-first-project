@@ -58,21 +58,21 @@ THE WORKFLOW IS:
 
 There is NO shortcut. There is NO exception. Not even "just a small fix."
 ASKING "should I push to dev?" IS NOT ENOUGH — wait for the user to say it.
-- Current feature branch: `claude/loving-cerf-c6lME`
+- Current feature branch: `claude/gallant-ptolemy-9gZLb`
 
 ## Current Work in Progress
 Update this section at the end of each session to stay caught up next time.
 
-- Working branch: `claude/loving-cerf-c6lME` — in sync with `dev` ✅
+- Working branch: `claude/gallant-ptolemy-9gZLb` — in sync with `dev` ✅
 - `dev` branch is live at dev.brakeknights.com — auto-deploys on every push to `dev` ✅
+- **`master` branch deployed to brakeknights.com (live site) ✅ — launched this session**
 - Form emails fully working: internal notification + customer confirmation ✅
-- Pre-push hook in place — direct pushes to `master` are now blocked at the git level ✅
+- Pre-push hook in place — direct pushes to `master` blocked; override with "go master" keyword ✅
 - Images and CSS now served with `Cache-Control: no-cache` — stale browser cache is a solved problem ✅
 - CSS version is at `?v=3` across all 45 pages
 - **Pre-launch checklist: ALL ITEMS COMPLETE** ✅
 - Next steps:
-  1. Final review on dev.brakeknights.com (contact form, JSON-LD via Google Rich Results Test, browser console)
-  2. Merge dev → master via GitHub UI when approved
+  1. Add a good rotor-caliper photo to the brake inspection page (tabled — image rotation issue)
 
 ## Pre-Launch Checklist (Before Merging to Master)
 
