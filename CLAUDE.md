@@ -2,15 +2,19 @@
 
 ## Session Startup Checklist (Run These First, Every Session)
 1. `git config core.hooksPath .githooks` — activates the master push block
-2. `git branch --show-current` — confirm you are on `claude/loving-cerf-c6lME` (or the current feature branch); if not, switch: `git checkout claude/loving-cerf-c6lME`
+2. `git branch --show-current` — confirm you are on `claude/gallant-ptolemy-9gZLb` (or the current feature branch); if not, switch: `git checkout claude/gallant-ptolemy-9gZLb`
+
+## Master Push Override
+The pre-push hook blocks all pushes to master by default.
+To override: user says **"go master"** in chat. Claude then runs the push with `MASTER_OVERRIDE="go master"` set as an env var.
 
 ## Overview
 Website and customer portal for Brakeknights (brakeknights.com).
 Built with Node.js/Express, deployed on Hostinger.
 
 ## Key Facts
-- Live site at **brakeknights.com** was built using **Hostinger's website builder** — not code-based
-- The GitHub repo is a new code-based version being developed separately
+- **brakeknights.com is now the code-based Node.js/Express site** — deployed from the `master` branch via Hostinger git auto-deploy
+- The old Hostinger website builder site was replaced during launch
 - Live site must never be broken — always preview on dev first
 
 ## Branch & Deployment Workflow
@@ -18,7 +22,7 @@ Built with Node.js/Express, deployed on Hostinger.
 - `master` branch → deploys to **brakeknights.com** (live site)
 - All changes go on feature branch first. Only merge to `dev` when user approves. Only merge to `master` when user approves.
 - Never push directly to `master` without explicit user approval.
-- **Deployment note:** Hostinger git auto-deploy is configured to watch the `dev` branch. Pushing to `dev` triggers deployment. Archive uploads also work but git push is simpler. SMTP_PASS env var is already set in Hostinger for dev.brakeknights.com.
+- **Deployment note:** Both `dev` and `master` branches are configured for Hostinger git auto-deploy. Pushing triggers automatic deployment. SMTP_PASS env var is set in Hostinger for both dev.brakeknights.com and brakeknights.com.
 
 ## Hostinger MCP
 A Hostinger MCP server is configured in `.mcp.json`.
@@ -54,21 +58,22 @@ THE WORKFLOW IS:
 
 There is NO shortcut. There is NO exception. Not even "just a small fix."
 ASKING "should I push to dev?" IS NOT ENOUGH — wait for the user to say it.
-- Current feature branch: `claude/loving-cerf-c6lME`
+- Current feature branch: `claude/gallant-ptolemy-9gZLb`
 
 ## Current Work in Progress
 Update this section at the end of each session to stay caught up next time.
 
-- Working branch: `claude/loving-cerf-c6lME` — in sync with `dev` ✅
-- `dev` branch is live at dev.brakeknights.com — auto-deploys on every push to `dev` ✅
-- Form emails fully working: internal notification + customer confirmation ✅
-- Pre-push hook in place — direct pushes to `master` are now blocked at the git level ✅
-- Images and CSS now served with `Cache-Control: no-cache` — stale browser cache is a solved problem ✅
+- Working branch: `claude/gallant-ptolemy-9gZLb` — in sync with `dev` and `master` ✅
+- `dev` branch → dev.brakeknights.com (auto-deploy on push) ✅
+- `master` branch → brakeknights.com (live site, auto-deploy on push) ✅ — **site is live**
+- Form emails fully working on both dev and live: internal notification + customer confirmation ✅
+- Pre-push hook in place — direct pushes to `master` blocked; override with "go master" keyword ✅
+- Google Search Console verified (DNS TXT record) and sitemap submitted ✅
+- Images and CSS served with `Cache-Control: no-cache` ✅
 - CSS version is at `?v=3` across all 45 pages
-- **Pre-launch checklist: ALL ITEMS COMPLETE** ✅
 - Next steps:
-  1. Final review on dev.brakeknights.com (contact form, JSON-LD via Google Rich Results Test, browser console)
-  2. Merge dev → master via GitHub UI when approved
+  1. Add a good rotor-caliper photo to the brake inspection page (tabled — image rotation issue)
+  2. Automated quote system (tabled — pricing structure discussion ready to resume)
 
 ## Pre-Launch Checklist (Before Merging to Master)
 
@@ -110,16 +115,17 @@ Update this section at the end of each session to stay caught up next time.
 ⚠️ Single source of truth. Update every time an item is completed or added.
 
 ### Pending
-- [ ] Final review on dev.brakeknights.com before merging to master (contact form, JSON-LD Rich Results Test, console check)
-- [ ] Merge dev → master via GitHub UI
+- [ ] Add a good rotor-caliper photo to brake inspection page (tabled — image rotation issue on mobile)
 - [ ] Automated quote system — vehicle tier pricing, auto-stop rules, quote delivery via email (tabled — pricing structure discussion ready to resume)
 
 ### Completed This Session
-- [x] Rotate rotor-caliper.jpeg 90 degrees clockwise on brake inspection page
-- [x] Fix homepage area list: added 8 missing cities (Annandale, Burke, Springfield, Oakton, Merrifield, Fairfax City, Fairfax Station, Clifton)
-- [x] Fix JSON-LD schema: moved Brake Inspection price to outer Offer, added image property to AutoRepair schema
-- [x] Increase mobile hero photo opacity to 0.35, background-size to cover, remove forced min-height on mobile
-- [x] Complete all pre-launch checklist items
+- [x] Remove rotor-caliper image from brake inspection page (mobile rotation issue — tabled for better photo)
+- [x] Set up "go master" override keyword in pre-push hook
+- [x] Launch brakeknights.com — new Node.js site deployed from master branch via Hostinger
+- [x] Set SMTP_PASS env var on brakeknights.com Hostinger deployment
+- [x] Fix email DNS records on brakeknights.com (SPF/DMARC via "Connect automatically")
+- [x] Verify Google Search Console for brakeknights.com (DNS TXT record)
+- [x] Submit sitemap to Google Search Console
 
 ### Previously Completed
 - [x] Add 3 worn rotor photos to brake pad/rotor replacement page (5-photo grid, 3-column layout); deployed to dev

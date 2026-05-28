@@ -6,4 +6,5 @@ if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
 fi
 
 cd "$CLAUDE_PROJECT_DIR"
+git config core.hooksPath .githooks
 npm install
