@@ -178,8 +178,12 @@ Update this section at the end of each session to stay caught up next time.
 - [ ] Phase 9: white-label packaging for other service businesses
 - [ ] Add a good rotor-caliper photo to brake inspection page (tabled — image rotation issue on mobile)
 - [ ] Finalize pricing table by vehicle type (required before Phase 8)
+- [ ] CRM improvement: tag submission source (homepage vs contact page) in Square customer note
+- [ ] CRM improvement: replace flat note field with structured data fields once Phase 7 CRM is built
+- [ ] CRM improvement: add visible alert/logging if Square customer sync fails on a form submission
 
 ### Completed This Session
+- [x] Phase 2: auto-create Square customer when contact form is submitted — live on master
 - [x] Square Developer setup complete — sandbox + production credentials generated
 - [x] Square env vars saved in Hostinger hPanel for brakeknights.com
 - [x] Install Square Node.js SDK (`square` npm package)
