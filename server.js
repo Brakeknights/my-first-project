@@ -1,12 +1,24 @@
 const express = require('express');
 const path = require('path');
+const session = require('express-session');
 const nodemailer = require('nodemailer');
 const { verifyConnection, createOrFindSquareCustomer } = require('./square');
+const db = require('./db');
+const adminRouter = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'bk-dev-secret-change-in-prod',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 8 * 60 * 60 * 1000 }
+}));
+
+app.use('/admin', adminRouter);
 app.use('/images', express.static(path.join(__dirname, 'public/images'), {
   setHeaders: (res) => res.setHeader('Cache-Control', 'no-cache')
 }));
@@ -32,6 +44,11 @@ app.post('/api/contact', async (req, res) => {
   if (!firstName || !lastName || !phone) {
     return res.status(400).json({ success: false, error: 'Missing required fields' });
   }
+
+  // Save lead to database
+  const lead = db.prepare(
+    'INSERT INTO leads (first_name, last_name, phone, email, vehicle, service, message, preferred_contact, source) VALUES (?,?,?,?,?,?,?,?,?)'
+  ).run(firstName, lastName, phone, email || null, vehicle || null, service || null, message || null, preferredContact || null, source || null);
 
   if (!process.env.SMTP_PASS) {
     console.error('SMTP_PASS environment variable is not set');
@@ -148,7 +165,10 @@ app.post('/api/contact', async (req, res) => {
     // Create or find Square customer — runs after response so it never blocks the form
     const squareNote = [service && `Service: ${service}`, vehicle && `Vehicle: ${vehicle}`, message].filter(Boolean).join(' | ');
     createOrFindSquareCustomer({ firstName, lastName, phone, email, vehicle, note: squareNote })
-      .then(r => console.log(`Square customer ${r.action}: ${r.customerId}`))
+      .then(r => {
+        console.log(`Square customer ${r.action}: ${r.customerId}`);
+        db.prepare('UPDATE leads SET square_customer_id = ? WHERE id = ?').run(r.customerId, lead.lastInsertRowid);
+      })
       .catch(err => console.error('Square customer sync error:', err.message));
   } catch (err) {
     console.error('Email send error:', err.code, err.message);
