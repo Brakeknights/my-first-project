@@ -36,13 +36,14 @@ function timeAgo(dateStr) {
 
 function statusBadge(status) {
   const styles = {
-    new:       'background:#e3f0ff;color:#1a6fc4;',
-    quoted:    'background:#dde7fb;color:#3a4fb8;',
-    follow_up: 'background:#fce8ff;color:#8b2fc9;',
-    booked:    'background:#e6f9ee;color:#1a7a3a;',
-    completed: 'background:#f0f0f0;color:#555;',
+    new:            'background:#e3f0ff;color:#1a6fc4;',
+    quoted:         'background:#dde7fb;color:#3a4fb8;',
+    follow_up:      'background:#fce8ff;color:#8b2fc9;',
+    quote_accepted: 'background:#e0f4f8;color:#0e7490;',
+    booked:         'background:#e6f9ee;color:#1a7a3a;',
+    completed:      'background:#f0f0f0;color:#555;',
   };
-  const labels = { new: 'New', quoted: 'Quoted', follow_up: 'Follow Up', booked: 'Booked', completed: 'Completed' };
+  const labels = { new: 'New', quoted: 'Quoted', follow_up: 'Follow Up', quote_accepted: 'Quote Accepted', booked: 'Booked', completed: 'Completed' };
   const style = styles[status] || styles.new;
   const label = labels[status] || status;
   return '<span style="' + style + 'padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;letter-spacing:0.3px;white-space:nowrap;">' + label + '</span>';
@@ -51,6 +52,37 @@ function statusBadge(status) {
 function requireAuth(req, res, next) {
   if (req.session && req.session.adminAuthed) return next();
   res.redirect('/admin/login');
+}
+
+async function notifyStageChange(req, lead, newStatus) {
+  if (!process.env.SMTP_PASS) return;
+  var statusLabels = { new: 'New', quoted: 'Quoted', follow_up: 'Follow Up', quote_accepted: 'Quote Accepted', booked: 'Booked', completed: 'Completed' };
+  var newLabel = statusLabels[newStatus] || newStatus;
+  var oldLabel = statusLabels[lead.status] || lead.status;
+  var baseUrl = (req.headers['x-forwarded-proto'] || req.protocol) + '://' + req.get('host');
+  var adminUrl = baseUrl + '/admin/quote/' + lead.id;
+  var name = lead.first_name + ' ' + lead.last_name;
+  var html = '<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;border:1px solid #ddd;border-radius:8px;overflow:hidden;">'
+    + '<div style="background:#0a1f3d;padding:14px 20px;"><h2 style="color:#6b8ff5;margin:0;font-size:1.1rem;">Lead Status Updated</h2></div>'
+    + '<div style="padding:20px;">'
+    + '<table style="width:100%;border-collapse:collapse;font-size:0.95rem;">'
+    + '<tr><td style="padding:7px 10px;font-weight:bold;color:#0a1f3d;width:120px;">Lead</td><td style="padding:7px 10px;">' + esc(name) + '</td></tr>'
+    + '<tr style="background:#f9f9f9;"><td style="padding:7px 10px;font-weight:bold;color:#0a1f3d;">Phone</td><td style="padding:7px 10px;"><a href="tel:' + esc(lead.phone) + '">' + esc(lead.phone) + '</a></td></tr>'
+    + (lead.service ? '<tr><td style="padding:7px 10px;font-weight:bold;color:#0a1f3d;">Service</td><td style="padding:7px 10px;">' + esc(lead.service) + '</td></tr>' : '')
+    + '<tr style="background:#f9f9f9;"><td style="padding:7px 10px;font-weight:bold;color:#0a1f3d;">Stage: Before</td><td style="padding:7px 10px;color:#888;">' + esc(oldLabel) + '</td></tr>'
+    + '<tr><td style="padding:7px 10px;font-weight:bold;color:#0a1f3d;">Stage: Now</td><td style="padding:7px 10px;font-weight:700;color:#0e7490;">' + esc(newLabel) + '</td></tr>'
+    + '</table>'
+    + '<div style="margin-top:16px;text-align:center;">'
+    + '<a href="' + adminUrl + '" style="display:inline-block;background:#4169e1;color:#fff;font-weight:700;font-size:0.95rem;text-decoration:none;padding:12px 28px;border-radius:8px;">Open in Admin</a>'
+    + '</div>'
+    + '</div></div>';
+  var tx = nodemailer.createTransport({ host: 'smtp.hostinger.com', port: 465, secure: true, auth: { user: 'greetings@brakeknights.com', pass: process.env.SMTP_PASS } });
+  await tx.sendMail({
+    from:    '"BK Admin" <greetings@brakeknights.com>',
+    to:      'greetings@brakeknights.com',
+    subject: 'Lead Update: ' + name + ' → ' + newLabel,
+    html
+  });
 }
 
 const CSS = `
@@ -111,6 +143,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .preview-box{background:#f4f7fb;border:1px solid #dde3ea;border-radius:8px;padding:16px;margin-top:14px;font-size:0.87rem;line-height:1.6;color:#444}
 .preview-box h4{color:#0a1f3d;margin-bottom:8px;font-size:0.92rem}
 .preview-divider{border:none;border-top:1px solid #dde3ea;margin:10px 0}
+.svc-check-list{border:1.5px solid #dde3ea;border-radius:8px;overflow-y:auto;max-height:180px;padding:4px 0;}
+.svc-check-item{display:flex;align-items:center;gap:9px;padding:9px 12px;font-size:0.9rem;cursor:pointer;border-bottom:1px solid #f4f4f4;color:#1a2a3a;}
+.svc-check-item:last-child{border-bottom:none;}
+.svc-check-item:hover{background:#f9fbff;}
+.svc-check-item input[type=checkbox]{width:16px;height:16px;flex-shrink:0;cursor:pointer;accent-color:#4169e1;}
 `;
 
 function page(title, body, req) {
@@ -174,11 +211,16 @@ router.get('/logout', function(req, res) {
 
 // ─── Status update ────────────────────────────────────────────────────────────
 
-router.post('/lead/:id/status', requireAuth, express.urlencoded({ extended: false }), function(req, res) {
-  var validStatuses = ['new', 'quoted', 'follow_up', 'booked', 'completed'];
+router.post('/lead/:id/status', requireAuth, express.urlencoded({ extended: false }), async function(req, res) {
+  var validStatuses = ['new', 'quoted', 'follow_up', 'quote_accepted', 'booked', 'completed'];
   var status = req.body.status;
   if (!validStatuses.includes(status)) return res.status(400).send('Invalid status');
-  db.prepare('UPDATE leads SET status = ? WHERE id = ?').run(status, req.params.id);
+  var lead = db.prepare('SELECT * FROM leads WHERE id = ?').get(req.params.id);
+  if (!lead) return res.status(404).send('Lead not found');
+  if (lead.status !== status) {
+    db.prepare("UPDATE leads SET status = ?, status_updated_at = datetime('now') WHERE id = ?").run(status, req.params.id);
+    notifyStageChange(req, lead, status).catch(function(err) { console.error('Stage notification error:', err.message); });
+  }
   var back = req.body.back || '/admin';
   res.redirect(back);
 });
@@ -206,12 +248,13 @@ router.get('/', requireAuth, function(req, res) {
   var total = db.prepare('SELECT COUNT(*) as n FROM leads').get().n;
 
   var tabs = [
-    ['all',       'All',       total],
-    ['new',       'New',       counts.new       || 0],
-    ['quoted',    'Quoted',    counts.quoted    || 0],
-    ['follow_up', 'Follow Up', counts.follow_up || 0],
-    ['booked',    'Booked',    counts.booked    || 0],
-    ['completed', 'Completed', counts.completed || 0],
+    ['all',            'All',            total],
+    ['new',            'New',            counts.new            || 0],
+    ['quoted',         'Quoted',         counts.quoted         || 0],
+    ['follow_up',      'Follow Up',      counts.follow_up      || 0],
+    ['quote_accepted', 'Quote Accepted', counts.quote_accepted || 0],
+    ['booked',         'Booked',         counts.booked         || 0],
+    ['completed',      'Completed',      counts.completed      || 0],
   ];
 
   var tabsHtml = tabs.map(function(t) {
@@ -249,8 +292,8 @@ router.get('/', requireAuth, function(req, res) {
           + '<input type="hidden" name="back" value="/admin?status=' + status + (search ? '&q=' + encodeURIComponent(search) : '') + '">'
           + '<label style="font-size:0.78rem;color:#aaa;font-weight:600;white-space:nowrap;">Status:</label>'
           + '<select name="status" onchange="this.form.submit()" style="flex:1;padding:6px 8px;border:1.5px solid #dde3ea;border-radius:6px;font-size:0.82rem;color:#1a2a3a;background:#fff;">'
-          + ['new','quoted','follow_up','booked','completed'].map(function(s) {
-              var label = { new:'New', quoted:'Quoted', follow_up:'Follow Up', booked:'Booked', completed:'Completed' }[s];
+          + ['new','quoted','follow_up','quote_accepted','booked','completed'].map(function(s) {
+              var label = { new:'New', quoted:'Quoted', follow_up:'Follow Up', quote_accepted:'Quote Accepted', booked:'Booked', completed:'Completed' }[s];
               return '<option value="' + s + '"' + (l.status === s ? ' selected' : '') + '>' + label + '</option>';
             }).join('')
           + '</select>'
@@ -292,10 +335,14 @@ router.get('/quote/:id', requireAuth, function(req, res) {
   var currentTaxRate = q.tax_rate != null ? +(q.tax_rate * 100).toFixed(2) : +(PRICING.taxRate * 100).toFixed(2);
 
   var serviceNames = Object.keys(PRICING.services);
-  var serviceOptions = '<option value="" disabled' + (currentService === '' ? ' selected' : '') + '>Select a service...</option>'
+  var currentServices = currentService ? currentService.split(', ').map(function(s) { return s.trim(); }) : [];
+  var serviceCheckboxes = '<div class="svc-check-list">'
     + serviceNames.map(function(s) {
-        return '<option value="' + esc(s) + '"' + (currentService === s ? ' selected' : '') + '>' + esc(s) + '</option>';
-      }).join('');
+        var checked = currentServices.indexOf(s) !== -1 ? ' checked' : '';
+        return '<label class="svc-check-item"><input type="checkbox" class="svc-cb" value="' + esc(s) + '"' + checked + ' onchange="updatePrices()"> ' + esc(s) + '</label>';
+      }).join('')
+    + '</div>'
+    + '<input type="hidden" name="service" id="svcHidden" value="' + esc(currentService) + '">';
 
   var pricingJson = JSON.stringify(PRICING.services);
   var noEmail = !lead.email;
@@ -322,8 +369,8 @@ router.get('/quote/:id', requireAuth, function(req, res) {
     + '<input type="hidden" name="back" value="/admin/quote/' + lead.id + '">'
     + '<label style="font-size:0.78rem;color:#aaa;font-weight:600;white-space:nowrap;">Status:</label>'
     + '<select name="status" onchange="this.form.submit()" style="flex:1;padding:7px 10px;border:1.5px solid #dde3ea;border-radius:6px;font-size:0.88rem;color:#1a2a3a;background:#fff;">'
-    + ['new','quoted','follow_up','booked','completed'].map(function(s) {
-        var label = { new:'New', quoted:'Quoted', follow_up:'Follow Up', booked:'Booked', completed:'Completed' }[s];
+    + ['new','quoted','follow_up','quote_accepted','booked','completed'].map(function(s) {
+        var label = { new:'New', quoted:'Quoted', follow_up:'Follow Up', quote_accepted:'Quote Accepted', booked:'Booked', completed:'Completed' }[s];
         return '<option value="' + s + '"' + (lead.status === s ? ' selected' : '') + '>' + label + '</option>';
       }).join('')
     + '</select>'
@@ -361,8 +408,8 @@ router.get('/quote/:id', requireAuth, function(req, res) {
     + '<div class="card">'
     + '<div class="section-title">Build Quote</div>'
 
-    + '<div class="form-group"><label>Service</label>'
-    + '<select name="service" id="svc" onchange="updatePrices()">' + serviceOptions + '</select></div>'
+    + '<div class="form-group"><label>Service <span style="color:#bbb;font-weight:400;">(select all that apply)</span></label>'
+    + serviceCheckboxes + '</div>'
 
     + '<div class="form-group"><label>Tier</label>'
     + '<div class="tier-toggle">'
@@ -431,13 +478,20 @@ router.get('/quote/:id', requireAuth, function(req, res) {
     + '}'
 
     + 'function updatePrices(){'
-    +   'var svc=document.getElementById("svc").value;'
-    +   'if(!svc||!PRICING[svc])return;'
-    +   'var p=PRICING[svc][tier];'
-    +   'if(!p)return;'
-    +   'document.getElementById("parts").value=p.parts.toFixed(2);'
-    +   'document.getElementById("labor").value=p.labor.toFixed(2);'
-    +   'document.getElementById("ss").value=p.shopSupplies.toFixed(2);'
+    +   'var cbs=document.querySelectorAll(".svc-cb:checked");'
+    +   'var names=Array.from(cbs).map(function(c){return c.value;});'
+    +   'document.getElementById("svcHidden").value=names.join(", ");'
+    +   'var totParts=0,totLabor=0,totSS=0;'
+    +   'names.forEach(function(svc){'
+    +     'if(!PRICING[svc])return;'
+    +     'var p=PRICING[svc][tier];'
+    +     'if(!p)return;'
+    +     'totParts+=p.parts;totLabor+=p.labor;totSS+=p.shopSupplies;'
+    +   '});'
+    +   'if(names.length===0)return;'
+    +   'document.getElementById("parts").value=totParts.toFixed(2);'
+    +   'document.getElementById("labor").value=totLabor.toFixed(2);'
+    +   'document.getElementById("ss").value=totSS.toFixed(2);'
     +   'calc();'
     + '}'
 
@@ -461,7 +515,7 @@ router.get('/quote/:id', requireAuth, function(req, res) {
     + 'function togglePreview(){'
     +   'var box=document.getElementById("previewBox");'
     +   'if(box.style.display!=="none"){box.style.display="none";document.getElementById("prevBtn").textContent="Preview Email";return;}'
-    +   'var svc=document.getElementById("svc").value||"(not set)";'
+    +   'var svc=document.getElementById("svcHidden").value||"(not set)";'
     +   'var parts=parseFloat(document.getElementById("parts").value)||0;'
     +   'var labor=parseFloat(document.getElementById("labor").value)||0;'
     +   'var ss=parseFloat(document.getElementById("ss").value)||0;'

@@ -58,4 +58,11 @@ addQuoteCol('pref_time',        'TEXT');
 addQuoteCol('pref_location',    'TEXT');
 addQuoteCol('scheduling_notes', 'TEXT');
 
+const leadCols = db.prepare("PRAGMA table_info(leads)").all().map(c => c.name);
+const addLeadCol = (name, def) => {
+  if (!leadCols.includes(name)) db.exec(`ALTER TABLE leads ADD COLUMN ${name} ${def}`);
+};
+addLeadCol('status_updated_at',  'TEXT');
+addLeadCol('followup_sent',      'INTEGER DEFAULT 0');
+
 module.exports = db;

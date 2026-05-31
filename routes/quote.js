@@ -34,7 +34,7 @@ function buildDateOptions() {
       + String(day.getMonth() + 1).padStart(2, '0') + '-'
       + String(day.getDate()).padStart(2, '0');
     var label = WEEKDAYS[day.getDay()] + ', ' + MONTHS[day.getMonth()] + ' ' + day.getDate();
-    opts += '<option value="' + iso + '">' + label + '</option>';
+    opts += '<option value="' + iso + '" data-wday="' + day.getDay() + '">' + label + '</option>';
     added++;
   }
   return opts;
@@ -186,7 +186,30 @@ router.get('/:id/:token', function(req, res) {
     + '<div class="note">Accepting confirms the quoted price. Your time is a request: we&rsquo;ll review it and confirm, or contact you about other availability.</div>'
     + '</form>'
     + '</div>'
-    + '<div class="callbar"><span class="muted">Questions first? Call or text </span><a href="tel:+17039774475">703-977-4475</a></div>';
+    + '<div class="callbar"><span class="muted">Questions first? Call or text </span><a href="tel:+17039774475">703-977-4475</a></div>'
+    + '<script>'
+    + '(function(){'
+    +   'var dateEl=document.querySelector(\'select[name="prefDate"]\');'
+    +   'var timeEl=document.querySelector(\'select[name="prefTime"]\');'
+    +   'if(!dateEl||!timeEl)return;'
+    +   'function capTimes(){'
+    +     'var sel=dateEl.options[dateEl.selectedIndex];'
+    +     'var isSat=sel&&sel.getAttribute("data-wday")==="6";'
+    +     'Array.from(timeEl.options).forEach(function(o){'
+    +       'if(!o.value)return;'
+    +       'var parts=o.value.match(/(\\d+):(\\d+) (AM|PM)/);'
+    +       'if(!parts)return;'
+    +       'var h=parseInt(parts[1]);var m=parseInt(parts[2]);var ap=parts[3];'
+    +       'var h24=(ap==="PM"&&h!==12)?h+12:(ap==="AM"&&h===12)?0:h;'
+    +       'var mins=h24*60+m;'
+    +       'o.disabled=isSat&&mins>15*60;'
+    +       'if(o.disabled&&o.selected){o.selected=false;timeEl.value=""}'
+    +     '});'
+    +   '}'
+    +   'dateEl.addEventListener("change",capTimes);'
+    +   'capTimes();'
+    + '})();'
+    + '</script>';
 
   res.send(shell('Your Quote', body));
 });
@@ -209,8 +232,8 @@ router.post('/:id/:token/accept', express.urlencoded({ extended: false }), async
     'UPDATE quotes SET accepted_at = datetime(\'now\'), pref_date = ?, pref_time = ?, pref_location = ?, scheduling_notes = ? WHERE id = ?'
   ).run(prefDate, prefTime, prefLocation, schedulingNotes, q.id);
 
-  // Move the lead to Follow Up so the owner reviews the scheduling request.
-  db.prepare('UPDATE leads SET status = ? WHERE id = ?').run('follow_up', q.lead_id);
+  // Move the lead to Quote Accepted so the owner reviews the scheduling request.
+  db.prepare("UPDATE leads SET status = ?, status_updated_at = datetime('now') WHERE id = ?").run('quote_accepted', q.lead_id);
 
   // Reload so the confirmation reflects the saved values.
   var fresh = loadQuote(req.params.id, req.params.token);
@@ -286,7 +309,7 @@ function ownerAcceptedEmail(q) {
     + '<tr><td style="padding:4px 0;color:#888;vertical-align:top;">Location</td><td style="padding:4px 0;">' + esc(q.pref_location || '—') + '</td></tr>'
     + (q.scheduling_notes ? '<tr><td style="padding:4px 0;color:#888;vertical-align:top;">Notes</td><td style="padding:4px 0;">' + esc(q.scheduling_notes) + '</td></tr>' : '')
     + '</table></div>'
-    + '<p style="margin:16px 0 0;font-size:0.88rem;color:#666;">This lead is now marked <strong>Follow Up</strong> in the admin panel. Confirm the time or contact the customer about other openings.</p>'
+    + '<p style="margin:16px 0 0;font-size:0.88rem;color:#666;">This lead is now marked <strong>Quote Accepted</strong> in the admin panel. Confirm the time or contact the customer about other openings.</p>'
     + '</div></div>';
 }
 

@@ -184,3 +184,48 @@ app.post('/api/contact', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Brakeknights server running on port ${PORT}`);
 });
+
+// Auto follow-up: if a lead has been in quote_accepted for 48h with no further action,
+// send a reminder email to the owner and mark followup_sent so it only fires once.
+setInterval(function() {
+  if (!process.env.SMTP_PASS) return;
+  var stale = db.prepare(
+    "SELECT * FROM leads WHERE status = 'quote_accepted' AND followup_sent = 0 "
+    + "AND status_updated_at IS NOT NULL "
+    + "AND (julianday('now') - julianday(status_updated_at)) * 24 >= 48"
+  ).all();
+  if (stale.length === 0) return;
+
+  var transporter = nodemailer.createTransport({
+    host: 'smtp.hostinger.com',
+    port: 465,
+    secure: true,
+    auth: { user: 'greetings@brakeknights.com', pass: process.env.SMTP_PASS }
+  });
+
+  stale.forEach(function(lead) {
+    var name = lead.first_name + ' ' + lead.last_name;
+    var html = '<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;border:1px solid #ddd;border-radius:8px;overflow:hidden;">'
+      + '<div style="background:#e07000;padding:14px 20px;"><h2 style="color:#fff;margin:0;font-size:1.1rem;">Reminder: Pending Accepted Quote</h2></div>'
+      + '<div style="padding:20px;">'
+      + '<p style="margin:0 0 14px;color:#444;font-size:0.95rem;"><strong>' + lead.first_name + ' ' + lead.last_name + '</strong> accepted their quote 48 hours ago and is still waiting to be scheduled.</p>'
+      + '<table style="width:100%;border-collapse:collapse;font-size:0.92rem;">'
+      + '<tr><td style="padding:6px 10px;font-weight:bold;color:#0a1f3d;width:120px;">Phone</td><td style="padding:6px 10px;"><a href="tel:' + lead.phone + '">' + lead.phone + '</a></td></tr>'
+      + (lead.email ? '<tr style="background:#f9f9f9;"><td style="padding:6px 10px;font-weight:bold;color:#0a1f3d;">Email</td><td style="padding:6px 10px;">' + lead.email + '</td></tr>' : '')
+      + (lead.service ? '<tr><td style="padding:6px 10px;font-weight:bold;color:#0a1f3d;">Service</td><td style="padding:6px 10px;">' + lead.service + '</td></tr>' : '')
+      + '</table>'
+      + '<div style="margin-top:16px;text-align:center;">'
+      + '<a href="https://brakeknights.com/admin/quote/' + lead.id + '" style="display:inline-block;background:#4169e1;color:#fff;font-weight:700;font-size:0.95rem;text-decoration:none;padding:12px 28px;border-radius:8px;">Open in Admin</a>'
+      + '</div>'
+      + '</div></div>';
+
+    db.prepare('UPDATE leads SET followup_sent = 1 WHERE id = ?').run(lead.id);
+
+    transporter.sendMail({
+      from:    '"BK Admin" <greetings@brakeknights.com>',
+      to:      'greetings@brakeknights.com',
+      subject: 'Reminder: ' + name + ' — accepted quote not yet scheduled',
+      html
+    }).catch(function(err) { console.error('Follow-up reminder error:', err.message); });
+  });
+}, 60 * 60 * 1000); // check every hour
