@@ -67,6 +67,9 @@ app.post('/api/contact', async (req, res) => {
     }
   });
 
+  const baseUrl = (req.headers['x-forwarded-proto'] || req.protocol) + '://' + req.get('host');
+  const adminUrl = baseUrl + '/admin/quote/' + lead.lastInsertRowid;
+
   // Internal notification email to Brake Knights
   const internalHtml = `
     <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;border:1px solid #ddd;border-radius:8px;">
@@ -85,6 +88,9 @@ app.post('/api/contact', async (req, res) => {
       </table>
       <div style="margin-top:20px;padding:12px;background:#e3f0ff;border-left:4px solid #4169e1;border-radius:4px;font-size:0.85rem;color:#555;">
         Reply directly to this email to respond to the customer.
+      </div>
+      <div style="margin-top:14px;text-align:center;">
+        <a href="${adminUrl}" style="display:inline-block;background:#4169e1;color:#fff;font-weight:700;font-size:0.9rem;text-decoration:none;padding:11px 26px;border-radius:8px;">Open in Admin &rarr;</a>
       </div>
     </div>
   `;

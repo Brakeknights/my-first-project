@@ -146,8 +146,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .svc-check-list{border:1.5px solid #dde3ea;border-radius:8px;overflow-y:auto;max-height:180px;padding:4px 0;}
 .svc-check-item{display:flex;align-items:center;gap:9px;padding:9px 12px;font-size:0.9rem;cursor:pointer;border-bottom:1px solid #f4f4f4;color:#1a2a3a;}
 .svc-check-item:last-child{border-bottom:none;}
-.svc-check-item:hover{background:#f9fbff;}
+.svc-check-item:hover{background:#f0f5ff;}
 .svc-check-item input[type=checkbox]{width:16px;height:16px;flex-shrink:0;cursor:pointer;accent-color:#4169e1;}
+.svc-check-item:has(input:checked){background:#e8f0fe;color:#1a4fc4;font-weight:600;border-bottom-color:#d4e2fb;}
+.svc-clear-btn{margin-top:7px;padding:6px 12px;border:1.5px solid #dde3ea;border-radius:6px;background:#fff;color:#888;font-size:0.8rem;font-weight:600;cursor:pointer;}
+.svc-clear-btn:hover{border-color:#c0c8d8;color:#555;}
 `;
 
 function page(title, body, req) {
@@ -409,7 +412,9 @@ router.get('/quote/:id', requireAuth, function(req, res) {
     + '<div class="section-title">Build Quote</div>'
 
     + '<div class="form-group"><label>Service <span style="color:#bbb;font-weight:400;">(select all that apply)</span></label>'
-    + serviceCheckboxes + '</div>'
+    + serviceCheckboxes
+    + '<button type="button" class="svc-clear-btn" onclick="clearServices()">&#10005; Clear selection</button>'
+    + '</div>'
 
     + '<div class="form-group"><label>Tier</label>'
     + '<div class="tier-toggle">'
@@ -477,6 +482,15 @@ router.get('/quote/:id', requireAuth, function(req, res) {
     +   'updatePrices();'
     + '}'
 
+    + 'function clearServices(){'
+    +   'document.querySelectorAll(".svc-cb").forEach(function(cb){cb.checked=false;});'
+    +   'document.getElementById("svcHidden").value="";'
+    +   'document.getElementById("parts").value="0.00";'
+    +   'document.getElementById("labor").value="0.00";'
+    +   'document.getElementById("ss").value="0.00";'
+    +   'calc();'
+    + '}'
+
     + 'function updatePrices(){'
     +   'var cbs=document.querySelectorAll(".svc-cb:checked");'
     +   'var names=Array.from(cbs).map(function(c){return c.value;});'
@@ -515,15 +529,17 @@ router.get('/quote/:id', requireAuth, function(req, res) {
     + 'function togglePreview(){'
     +   'var box=document.getElementById("previewBox");'
     +   'if(box.style.display!=="none"){box.style.display="none";document.getElementById("prevBtn").textContent="Preview Email";return;}'
-    +   'var svc=document.getElementById("svcHidden").value||"(not set)";'
+    +   'var svcNames=Array.from(document.querySelectorAll(".svc-cb:checked")).map(function(c){return c.value;});'
+    +   'var svc=svcNames.length?svcNames.join(", "):"(no service selected)";'
     +   'var parts=parseFloat(document.getElementById("parts").value)||0;'
     +   'var labor=parseFloat(document.getElementById("labor").value)||0;'
     +   'var ss=parseFloat(document.getElementById("ss").value)||0;'
     +   'var tax=parseFloat(document.getElementById("taxH").value)||0;'
     +   'var tot=parseFloat(document.getElementById("totalH").value)||0;'
     +   'var tierLabel=tier.charAt(0).toUpperCase()+tier.slice(1);'
-    +   'var veh=vehicle?" on your <strong>"+vehicle+"</strong>":"";'
+    +   'var veh=vehicle?" for your <strong>"+vehicle+"</strong>":"";'
     +   'var toLine=leadEmail||"<em style=\'color:#e07000\'>(no email on file)</em>";'
+    +   'var svcListHtml=svcNames.map(function(s){return "<li style=\'padding:3px 0;\'>"+s+"</li>";}).join("");'
     +   'box.innerHTML='
     +     '"<div class=\'preview-box\'>"'
     +     '+"<h4>Email Preview</h4>"'
@@ -531,7 +547,9 @@ router.get('/quote/:id', requireAuth, function(req, res) {
     +     '+"<div style=\'font-size:0.82rem;color:#888;margin-bottom:8px;\'>Subject: Your Brake Service Quote — Brake Knights</div>"'
     +     '+"<hr class=\'preview-divider\'>"'
     +     '+"<p>Greetings "+firstName+",</p>"'
-    +     '+"<p style=\'margin-top:8px;\'>Here is your <strong>"+tierLabel+"</strong> quote for <strong>"+svc+"</strong>"+veh+":</p>"'
+    +     '+"<p style=\'margin-top:8px;\'>Here is your <strong>"+tierLabel+"</strong> quote"+veh+":</p>"'
+    +     '+"<div style=\'margin:10px 0 4px;font-size:0.8rem;font-weight:700;color:#0a1f3d;text-transform:uppercase;letter-spacing:.4px;\'>Services Included</div>"'
+    +     '+"<ul style=\'margin:0 0 12px;padding-left:18px;font-size:0.9rem;color:#1a2a3a;\'>"+svcListHtml+"</ul>"'
     +     '+"<table style=\'width:100%;margin:12px 0;font-size:0.88rem;border-collapse:collapse;\'>"'
     +     '+"<tr><td>Parts &amp; Labor</td><td style=\'text-align:right;\'>$"+(parts+labor).toFixed(2)+"</td></tr>"'
     +     '+"<tr><td>Shop Supplies</td><td style=\'text-align:right;\'>$"+ss.toFixed(2)+"</td></tr>"'
@@ -630,8 +648,10 @@ function buildQuoteEmail(lead, service, tier, parts, labor, shopSupplies, tax, t
     + '<h2 style="color:#0a1f3d;margin:0 0 16px;font-size:1.15rem;">Greetings ' + esc(lead.first_name) + ',</h2>'
     + '<p style="color:#444;line-height:1.6;margin:0 0 20px;">Here is your <strong>' + tierLabel + '</strong> quote' + vehicleBit + ':</p>'
     + '<div style="background:#f4f7fb;border-radius:8px;padding:20px;margin-bottom:24px;">'
-    + '<p style="font-weight:700;color:#0a1f3d;margin:0 0 4px;font-size:0.82rem;text-transform:uppercase;letter-spacing:.5px;">Service</p>'
-    + '<p style="color:#1a2a3a;font-size:1rem;font-weight:600;margin:0 0 16px;">' + esc(service) + '</p>'
+    + '<p style="font-weight:700;color:#0a1f3d;margin:0 0 8px;font-size:0.82rem;text-transform:uppercase;letter-spacing:.5px;">Services Included</p>'
+    + '<ul style="margin:0 0 16px;padding-left:18px;font-size:0.95rem;color:#1a2a3a;font-weight:600;">'
+    + service.split(', ').map(function(s) { return '<li style="padding:3px 0;">' + esc(s.trim()) + '</li>'; }).join('')
+    + '</ul>'
     + '<table style="width:100%;border-collapse:collapse;font-size:0.9rem;color:#444;">'
     + '<tr><td style="padding:6px 0;">Parts &amp; Labor</td><td style="text-align:right;">$' + partsLabor.toFixed(2) + '</td></tr>'
     + '<tr><td style="padding:6px 0;">Shop Supplies</td><td style="text-align:right;">$' + shopSupplies.toFixed(2) + '</td></tr>'
