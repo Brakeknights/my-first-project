@@ -186,10 +186,19 @@ router.post('/lead/:id/status', requireAuth, express.urlencoded({ extended: fals
 
 router.get('/', requireAuth, function(req, res) {
   var status = req.query.status || 'all';
+  var search = (req.query.q || '').trim();
+  var sp = '%' + search + '%';
 
-  var leads = status === 'all'
-    ? db.prepare('SELECT * FROM leads ORDER BY id DESC').all()
-    : db.prepare('SELECT * FROM leads WHERE status = ? ORDER BY id DESC').all(status);
+  var leads;
+  if (search) {
+    leads = db.prepare(
+      'SELECT * FROM leads WHERE (first_name || " " || last_name LIKE ? OR phone LIKE ? OR email LIKE ? OR vehicle LIKE ? OR service LIKE ?) ORDER BY id DESC'
+    ).all(sp, sp, sp, sp, sp);
+  } else if (status === 'all') {
+    leads = db.prepare('SELECT * FROM leads ORDER BY id DESC').all();
+  } else {
+    leads = db.prepare('SELECT * FROM leads WHERE status = ? ORDER BY id DESC').all(status);
+  }
 
   var counts = db.prepare('SELECT status, COUNT(*) as n FROM leads GROUP BY status').all()
     .reduce(function(acc, r) { acc[r.status] = r.n; return acc; }, {});
@@ -206,7 +215,7 @@ router.get('/', requireAuth, function(req, res) {
 
   var tabsHtml = tabs.map(function(t) {
     var countBit = t[2] > 0 ? ' <span style="opacity:.65">(' + t[2] + ')</span>' : '';
-    return '<a href="/admin?status=' + t[0] + '" class="filter-tab' + (status === t[0] ? ' active' : '') + '">'
+    return '<a href="/admin?status=' + t[0] + '" class="filter-tab' + (!search && status === t[0] ? ' active' : '') + '">'
       + t[1] + countBit + '</a>';
   }).join('');
 
@@ -215,8 +224,12 @@ router.get('/', requireAuth, function(req, res) {
   if (req.query.msg === 'saved') alert = '<div class="alert alert-success">Quote saved. No email on file for this lead.</div>';
   if (req.query.msg === 'err')   alert = '<div class="alert alert-error">Failed to send quote email. Please try again.</div>';
 
+  var emptyMsg = search
+    ? 'No leads match &ldquo;' + esc(search) + '&rdquo;.'
+    : 'No leads' + (status !== 'all' ? ' in this category' : ' yet') + '.';
+
   var cardsHtml = leads.length === 0
-    ? '<div class="empty"><div style="font-size:2rem;margin-bottom:10px;">&#128203;</div>No leads' + (status !== 'all' ? ' in this category' : ' yet') + '.</div>'
+    ? '<div class="empty"><div style="font-size:2rem;margin-bottom:10px;">&#128203;</div>' + emptyMsg + '</div>'
     : leads.map(function(l) {
         return '<div class="card">'
           + '<div class="row-sb">'
@@ -232,7 +245,7 @@ router.get('/', requireAuth, function(req, res) {
           + '<a href="/admin/quote/' + l.id + '" class="btn btn-navy btn-sm" style="flex:1;text-align:center;">Open Quote</a>'
           + '</div>'
           + '<form method="POST" action="/admin/lead/' + l.id + '/status" style="margin-top:10px;display:flex;align-items:center;gap:8px;">'
-          + '<input type="hidden" name="back" value="/admin?status=' + status + '">'
+          + '<input type="hidden" name="back" value="/admin?status=' + status + (search ? '&q=' + encodeURIComponent(search) : '') + '">'
           + '<label style="font-size:0.78rem;color:#aaa;font-weight:600;white-space:nowrap;">Status:</label>'
           + '<select name="status" onchange="this.form.submit()" style="flex:1;padding:6px 8px;border:1.5px solid #dde3ea;border-radius:6px;font-size:0.82rem;color:#1a2a3a;background:#fff;">'
           + ['new','quoted','follow_up','booked','completed'].map(function(s) {
@@ -244,12 +257,20 @@ router.get('/', requireAuth, function(req, res) {
           + '</div>';
       }).join('');
 
+  var searchBar = '<form method="GET" action="/admin" style="margin-bottom:12px;display:flex;gap:8px;">'
+    + '<input type="hidden" name="status" value="' + esc(status) + '">'
+    + '<input type="text" name="q" value="' + esc(search) + '" placeholder="Search by name, phone, vehicle, service..." '
+    + 'style="flex:1;padding:9px 12px;border:1.5px solid #dde3ea;border-radius:8px;font-size:0.9rem;background:#fff;">'
+    + (search ? '<a href="/admin?status=' + esc(status) + '" style="padding:9px 12px;border:1.5px solid #dde3ea;border-radius:8px;background:#fff;color:#666;text-decoration:none;font-size:0.9rem;white-space:nowrap;">&#10005; Clear</a>' : '')
+    + '</form>';
+
   res.send(page('Leads',
     '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">'
     + '<h1 style="font-size:1.2rem;font-weight:700;color:#0a1f3d;">Leads</h1>'
     + '<span style="color:#aaa;font-size:0.83rem;">' + total + ' total</span>'
     + '</div>'
     + alert
+    + searchBar
     + '<div class="filter-tabs">' + tabsHtml + '</div>'
     + cardsHtml,
     req
@@ -262,8 +283,9 @@ router.get('/quote/:id', requireAuth, function(req, res) {
   var lead = db.prepare('SELECT * FROM leads WHERE id = ?').get(req.params.id);
   if (!lead) return res.status(404).send('Lead not found');
 
-  var existing = db.prepare('SELECT * FROM quotes WHERE lead_id = ? ORDER BY id DESC LIMIT 1').get(lead.id);
-  var q = existing || {};
+  var allQuotes = db.prepare('SELECT * FROM quotes WHERE lead_id = ? ORDER BY id DESC').all(lead.id);
+  var existing = allQuotes[0] || {};
+  var q = existing;
   var currentService = q.service || lead.service || '';
   var currentTier    = q.tier || 'standard';
   var currentTaxRate = q.tax_rate != null ? +(q.tax_rate * 100).toFixed(2) : +(PRICING.taxRate * 100).toFixed(2);
@@ -306,6 +328,32 @@ router.get('/quote/:id', requireAuth, function(req, res) {
     + '</select>'
     + '</form>'
     + '</div>'
+
+    // Quote history
+    + (allQuotes.length > 0
+        ? '<div class="card">'
+          + '<div class="section-title" style="margin-bottom:10px;">Quote History <span style="font-size:0.8rem;color:#aaa;font-weight:400;">(' + allQuotes.length + ')</span></div>'
+          + '<div style="overflow-x:auto;">'
+          + '<table style="width:100%;border-collapse:collapse;font-size:0.83rem;">'
+          + '<thead><tr style="border-bottom:2px solid #f0f0f0;">'
+          + '<th style="text-align:left;padding:4px 8px 8px 0;color:#888;font-weight:600;">Date</th>'
+          + '<th style="text-align:left;padding:4px 8px 8px;color:#888;font-weight:600;">Service</th>'
+          + '<th style="text-align:left;padding:4px 8px 8px;color:#888;font-weight:600;">Tier</th>'
+          + '<th style="text-align:right;padding:4px 0 8px 8px;color:#888;font-weight:600;">Total</th>'
+          + '</tr></thead><tbody>'
+          + allQuotes.map(function(pq, i) {
+              var isLatest = i === 0;
+              var sentDate = pq.sent_at ? new Date(pq.sent_at + 'Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' }) : '—';
+              var tierLabel = pq.tier === 'premium' ? 'Premium' : 'Standard';
+              return '<tr style="border-bottom:1px solid #f0f0f0;' + (isLatest ? 'font-weight:600;' : 'color:#666;') + '">'
+                + '<td style="padding:7px 8px 7px 0;white-space:nowrap;">' + sentDate + (isLatest ? ' <span style="font-size:0.72rem;background:#e3f0ff;color:#1a6fc4;padding:1px 6px;border-radius:10px;font-weight:700;">Latest</span>' : '') + '</td>'
+                + '<td style="padding:7px 8px;">' + esc(pq.service || '—') + '</td>'
+                + '<td style="padding:7px 8px;">' + tierLabel + '</td>'
+                + '<td style="padding:7px 0 7px 8px;text-align:right;">$' + fmt(pq.total) + '</td>'
+                + '</tr>';
+            }).join('')
+          + '</tbody></table></div></div>'
+        : '')
 
     // Quote form
     + '<form method="POST" action="/admin/quote/' + lead.id + '/send" id="qf">'
