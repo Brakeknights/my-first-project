@@ -63,6 +63,8 @@ THE WORKFLOW IS:
 
 There is NO shortcut. There is NO exception. Not even "just a small fix."
 ASKING "should I push to dev?" IS NOT ENOUGH — wait for the user to say it.
+NEVER suggest pushing to master. NEVER ask "did you mean go master?". NEVER prompt the user toward master in any way.
+The user ALWAYS reviews on dev before pushing to master. This is absolute.
 - Current feature branch: `claude/dazzling-planck-U9GXQ`
 
 ## Square Integration — Platform Build Plan
