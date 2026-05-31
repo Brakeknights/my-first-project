@@ -79,11 +79,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .tier-toggle{display:flex;border:2px solid #0a1f3d;border-radius:8px;overflow:hidden}
 .tier-btn{flex:1;padding:10px;border:none;background:#fff;color:#0a1f3d;font-size:0.9rem;font-weight:600;cursor:pointer;transition:background .15s,color .15s}
 .tier-btn.active{background:#0a1f3d;color:#fff}
-.price-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f0f0f0;font-size:0.9rem;gap:12px}
+.price-section{border:1.5px solid #dde3ea;border-radius:10px;overflow:hidden;margin-bottom:14px}
+.price-section-header{background:#f4f7fb;padding:8px 14px;font-size:0.78rem;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid #dde3ea}
+.price-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #f0f0f0;font-size:0.9rem;gap:12px}
 .price-row:last-child{border-bottom:none}
-.price-row.total-row{font-weight:700;font-size:1.05rem;color:#0a1f3d;padding-top:12px;border-top:2px solid #e0e7ef;border-bottom:none}
+.price-row.total-row{font-weight:700;font-size:1.05rem;color:#0a1f3d;background:#f9fbfd}
+.price-row.tax-row{color:#666;font-size:0.88rem}
+.price-row.divider-row{border-top:2px solid #dde3ea}
+.price-label{flex:1}
+.price-note{font-size:0.75rem;color:#aaa;font-weight:400}
 .price-input{width:96px;padding:7px 8px;border:1.5px solid #dde3ea;border-radius:6px;font-size:0.9rem;text-align:right;flex-shrink:0}
 .price-input:focus{outline:none;border-color:#0a1f3d}
+.tax-rate-input{width:44px;padding:3px 5px;border:1.5px solid #dde3ea;border-radius:5px;font-size:0.85rem;text-align:center}
+.tax-rate-input:focus{outline:none;border-color:#0a1f3d}
 .info-grid{display:grid;grid-template-columns:100px 1fr;gap:7px 12px;font-size:0.88rem}
 .info-key{color:#888}
 .info-val{color:#1a2a3a;font-weight:500;word-break:break-word}
@@ -101,8 +109,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .preview-box{background:#f4f7fb;border:1px solid #dde3ea;border-radius:8px;padding:16px;margin-top:14px;font-size:0.87rem;line-height:1.6;color:#444}
 .preview-box h4{color:#0a1f3d;margin-bottom:8px;font-size:0.92rem}
 .preview-divider{border:none;border-top:1px solid #dde3ea;margin:10px 0}
-.tax-rate-input{width:48px;padding:3px 5px;border:1.5px solid #dde3ea;border-radius:5px;font-size:0.85rem;text-align:center}
-.tax-rate-input:focus{outline:none;border-color:#0a1f3d}
 `;
 
 function page(title, body, req) {
@@ -192,12 +198,12 @@ router.get('/', requireAuth, function(req, res) {
   }).join('');
 
   var alert = '';
-  if (req.query.msg === 'sent')   alert = '<div class="alert alert-success">Quote sent successfully.</div>';
-  if (req.query.msg === 'saved')  alert = '<div class="alert alert-success">Quote saved. No email on file for this lead.</div>';
-  if (req.query.msg === 'err')    alert = '<div class="alert alert-error">Failed to send quote email. Please try again.</div>';
+  if (req.query.msg === 'sent')  alert = '<div class="alert alert-success">Quote sent successfully.</div>';
+  if (req.query.msg === 'saved') alert = '<div class="alert alert-success">Quote saved. No email on file for this lead.</div>';
+  if (req.query.msg === 'err')   alert = '<div class="alert alert-error">Failed to send quote email. Please try again.</div>';
 
   var cardsHtml = leads.length === 0
-    ? '<div class="empty"><div style="font-size:2rem;margin-bottom:10px;">📋</div>No leads' + (status !== 'all' ? ' in this category' : ' yet') + '.</div>'
+    ? '<div class="empty"><div style="font-size:2rem;margin-bottom:10px;">&#128203;</div>No leads' + (status !== 'all' ? ' in this category' : ' yet') + '.</div>'
     : leads.map(function(l) {
         return '<div class="card">'
           + '<div class="row-sb">'
@@ -237,7 +243,7 @@ router.get('/quote/:id', requireAuth, function(req, res) {
   var q = existing || {};
   var currentService = q.service || lead.service || '';
   var currentTier    = q.tier || 'standard';
-  var currentTaxRate = q.tax_rate != null ? q.tax_rate * 100 : PRICING.taxRate * 100;
+  var currentTaxRate = q.tax_rate != null ? +(q.tax_rate * 100).toFixed(2) : +(PRICING.taxRate * 100).toFixed(2);
 
   var serviceNames = Object.keys(PRICING.services);
   var serviceOptions = '<option value="" disabled' + (currentService === '' ? ' selected' : '') + '>Select a service...</option>'
@@ -250,7 +256,7 @@ router.get('/quote/:id', requireAuth, function(req, res) {
 
   var body = '<a href="/admin" class="back-link">&#8592; All Leads</a>'
 
-    // Customer card
+    // Customer info card
     + '<div class="card">'
     + '<div class="row-sb" style="margin-bottom:10px;">'
     + '<div><div class="lead-name">' + esc(lead.first_name) + ' ' + esc(lead.last_name) + '</div>'
@@ -259,21 +265,22 @@ router.get('/quote/:id', requireAuth, function(req, res) {
     + '</div>'
     + '<div class="info-grid">'
     + '<span class="info-key">Phone</span><span class="info-val"><a href="tel:' + esc(lead.phone) + '" style="color:#1a6fc4;">' + esc(lead.phone) + '</a></span>'
-    + (lead.email   ? '<span class="info-key">Email</span><span class="info-val">' + esc(lead.email)   + '</span>' : '<span class="info-key">Email</span><span class="info-val" style="color:#e07000;font-style:italic;">No email on file</span>')
+    + (lead.email   ? '<span class="info-key">Email</span><span class="info-val">' + esc(lead.email) + '</span>'
+                    : '<span class="info-key">Email</span><span class="info-val" style="color:#e07000;font-style:italic;">No email on file</span>')
     + (lead.vehicle ? '<span class="info-key">Vehicle</span><span class="info-val">' + esc(lead.vehicle) + '</span>' : '')
     + '<span class="info-key">Service</span><span class="info-val">' + esc(lead.service || 'Not specified') + '</span>'
     + (lead.preferred_contact ? '<span class="info-key">Contact via</span><span class="info-val">' + esc(lead.preferred_contact) + '</span>' : '')
     + (lead.message ? '<span class="info-key">Notes</span><span class="info-val" style="font-style:italic;">' + esc(lead.message) + '</span>' : '')
-    + '</div>'
-    + '</div>'
+    + '</div></div>'
 
     // Quote form
     + '<form method="POST" action="/admin/quote/' + lead.id + '/send" id="qf">'
-
     + '<div class="card">'
     + '<div class="section-title">Build Quote</div>'
+
     + '<div class="form-group"><label>Service</label>'
     + '<select name="service" id="svc" onchange="updatePrices()">' + serviceOptions + '</select></div>'
+
     + '<div class="form-group"><label>Tier</label>'
     + '<div class="tier-toggle">'
     + '<button type="button" class="tier-btn' + (currentTier === 'standard' ? ' active' : '') + '" id="btnStd" onclick="setTier(\'standard\')">Standard</button>'
@@ -281,24 +288,42 @@ router.get('/quote/:id', requireAuth, function(req, res) {
     + '</div>'
     + '<input type="hidden" name="tier" id="tierVal" value="' + esc(currentTier) + '"></div>'
 
-    // Price rows
-    + '<div class="price-row"><span>Parts &amp; Labor</span>'
-    + '<input class="price-input" type="number" name="partsLabor" id="pl" min="0" step="0.01" value="' + fmt(q.price_parts_labor) + '" oninput="calc()"></div>'
-    + '<div class="price-row"><span>Shop Supplies</span>'
+    // Price breakdown — internal section (parts + labor visible to admin only)
+    + '<div class="price-section">'
+    + '<div class="price-section-header">Internal Breakdown <span style="font-weight:400;text-transform:none;letter-spacing:0;">(not sent to customer)</span></div>'
+    + '<div class="price-row">'
+    + '<span class="price-label">Parts</span>'
+    + '<input class="price-input" type="number" name="parts" id="parts" min="0" step="0.01" value="' + fmt(q.price_parts) + '" oninput="calc()"></div>'
+    + '<div class="price-row">'
+    + '<span class="price-label">Labor <span class="price-note">(not taxed)</span></span>'
+    + '<input class="price-input" type="number" name="labor" id="labor" min="0" step="0.01" value="' + fmt(q.price_labor) + '" oninput="calc()"></div>'
+    + '<div class="price-row">'
+    + '<span class="price-label">Shop Supplies</span>'
     + '<input class="price-input" type="number" name="shopSupplies" id="ss" min="0" step="0.01" value="' + fmt(q.shop_supplies) + '" oninput="calc()"></div>'
-    + '<div class="price-row"><span style="display:flex;align-items:center;gap:4px;">Tax (<input class="tax-rate-input" type="number" name="taxRate" id="tr" min="0" max="20" step="0.1" value="' + fmt(currentTaxRate) + '" oninput="calc()">%)</span>'
+    + '<div class="price-row tax-row">'
+    + '<span class="price-label" style="display:flex;align-items:center;gap:5px;">VA Tax (<input class="tax-rate-input" type="number" name="taxRate" id="tr" min="0" max="20" step="0.1" value="' + fmt(currentTaxRate) + '" oninput="calc()">%) on Parts + Supplies</span>'
     + '<span id="taxAmt">$' + fmt(q.tax) + '</span></div>'
-    + '<div class="price-row total-row"><span>Total</span>'
-    + '<span id="totalAmt" style="font-size:1.15rem;">$' + fmt(q.total) + '</span></div>'
+    + '</div>'
+
+    // Customer-facing totals
+    + '<div class="price-section" style="margin-bottom:0;">'
+    + '<div class="price-section-header">Customer Quote</div>'
+    + '<div class="price-row"><span class="price-label">Parts &amp; Labor</span><span id="partsLaborDisplay">$' + fmt((q.price_parts || 0) + (q.price_labor || 0)) + '</span></div>'
+    + '<div class="price-row"><span class="price-label">Shop Supplies</span><span id="ssDisplay">$' + fmt(q.shop_supplies) + '</span></div>'
+    + '<div class="price-row tax-row"><span class="price-label">Tax</span><span id="taxDisplay">$' + fmt(q.tax) + '</span></div>'
+    + '<div class="price-row total-row divider-row"><span>Total</span><span id="totalAmt" style="font-size:1.15rem;">$' + fmt(q.total) + '</span></div>'
+    + '</div>'
+
     + '<input type="hidden" name="taxAmt"   id="taxH"   value="' + fmt(q.tax)   + '">'
     + '<input type="hidden" name="totalAmt" id="totalH" value="' + fmt(q.total) + '">'
     + '</div>'
 
+    // VIN and notes
     + '<div class="card">'
     + '<div class="form-group"><label>VIN <span style="color:#bbb;font-weight:400;">(optional)</span></label>'
     + '<input type="text" name="vin" placeholder="17-character VIN" value="' + esc(q.vin || '') + '" maxlength="17"></div>'
     + '<div class="form-group" style="margin-bottom:0;"><label>Internal Notes <span style="color:#bbb;font-weight:400;">(not sent to customer)</span></label>'
-    + '<textarea name="internalNotes" placeholder="Parts on order, scheduling notes, vehicle details...">' + esc(q.internal_notes || '') + '</textarea></div>'
+    + '<textarea name="internalNotes" placeholder="Parts ordered, scheduling notes, vehicle details...">' + esc(q.internal_notes || '') + '</textarea></div>'
     + '</div>'
 
     + (noEmail ? '<div class="alert alert-error" style="margin-bottom:8px;">No email on file. Quote will be saved but not emailed.</div>' : '')
@@ -313,6 +338,7 @@ router.get('/quote/:id', requireAuth, function(req, res) {
     + 'var firstName="' + esc(lead.first_name) + '";'
     + 'var vehicle="' + esc(lead.vehicle || '') + '";'
     + 'var leadEmail="' + esc(lead.email || '') + '";'
+
     + 'function setTier(t){'
     +   'tier=t;'
     +   'document.getElementById("tierVal").value=t;'
@@ -320,31 +346,41 @@ router.get('/quote/:id', requireAuth, function(req, res) {
     +   'document.getElementById("btnPrem").classList.toggle("active",t==="premium");'
     +   'updatePrices();'
     + '}'
+
     + 'function updatePrices(){'
     +   'var svc=document.getElementById("svc").value;'
     +   'if(!svc||!PRICING[svc])return;'
     +   'var p=PRICING[svc][tier];'
     +   'if(!p)return;'
-    +   'document.getElementById("pl").value=p.partsLabor.toFixed(2);'
+    +   'document.getElementById("parts").value=p.parts.toFixed(2);'
+    +   'document.getElementById("labor").value=p.labor.toFixed(2);'
     +   'document.getElementById("ss").value=p.shopSupplies.toFixed(2);'
     +   'calc();'
     + '}'
+
+    // Tax is on parts + shop supplies only (not labor — Virginia law)
     + 'function calc(){'
-    +   'var pl=parseFloat(document.getElementById("pl").value)||0;'
+    +   'var parts=parseFloat(document.getElementById("parts").value)||0;'
+    +   'var labor=parseFloat(document.getElementById("labor").value)||0;'
     +   'var ss=parseFloat(document.getElementById("ss").value)||0;'
     +   'var tr=parseFloat(document.getElementById("tr").value)||0;'
-    +   'var tax=(pl+ss)*tr/100;'
-    +   'var tot=pl+ss+tax;'
+    +   'var tax=(parts+ss)*tr/100;'
+    +   'var total=parts+labor+ss+tax;'
     +   'document.getElementById("taxAmt").textContent="$"+tax.toFixed(2);'
-    +   'document.getElementById("totalAmt").textContent="$"+tot.toFixed(2);'
+    +   'document.getElementById("partsLaborDisplay").textContent="$"+(parts+labor).toFixed(2);'
+    +   'document.getElementById("ssDisplay").textContent="$"+ss.toFixed(2);'
+    +   'document.getElementById("taxDisplay").textContent="$"+tax.toFixed(2);'
+    +   'document.getElementById("totalAmt").textContent="$"+total.toFixed(2);'
     +   'document.getElementById("taxH").value=tax.toFixed(2);'
-    +   'document.getElementById("totalH").value=tot.toFixed(2);'
+    +   'document.getElementById("totalH").value=total.toFixed(2);'
     + '}'
+
     + 'function togglePreview(){'
     +   'var box=document.getElementById("previewBox");'
     +   'if(box.style.display!=="none"){box.style.display="none";document.getElementById("prevBtn").textContent="Preview Email";return;}'
     +   'var svc=document.getElementById("svc").value||"(not set)";'
-    +   'var pl=parseFloat(document.getElementById("pl").value)||0;'
+    +   'var parts=parseFloat(document.getElementById("parts").value)||0;'
+    +   'var labor=parseFloat(document.getElementById("labor").value)||0;'
     +   'var ss=parseFloat(document.getElementById("ss").value)||0;'
     +   'var tax=parseFloat(document.getElementById("taxH").value)||0;'
     +   'var tot=parseFloat(document.getElementById("totalH").value)||0;'
@@ -354,24 +390,25 @@ router.get('/quote/:id', requireAuth, function(req, res) {
     +   'box.innerHTML='
     +     '"<div class=\'preview-box\'>"'
     +     '+"<h4>Email Preview</h4>"'
-    +     '+"<div style=\'font-size:0.82rem;color:#888;margin-bottom:6px;\'>To: "+toLine+"</div>"'
+    +     '+"<div style=\'font-size:0.82rem;color:#888;margin-bottom:4px;\'>To: "+toLine+"</div>"'
     +     '+"<div style=\'font-size:0.82rem;color:#888;margin-bottom:8px;\'>Subject: Your Brake Service Quote — Brake Knights</div>"'
     +     '+"<hr class=\'preview-divider\'>"'
     +     '+"<p>Greetings "+firstName+",</p>"'
     +     '+"<p style=\'margin-top:8px;\'>Here is your <strong>"+tierLabel+"</strong> quote for <strong>"+svc+"</strong>"+veh+":</p>"'
     +     '+"<table style=\'width:100%;margin:12px 0;font-size:0.88rem;border-collapse:collapse;\'>"'
-    +     '+"<tr><td>Parts &amp; Labor</td><td style=\'text-align:right;\'>$"+pl.toFixed(2)+"</td></tr>"'
+    +     '+"<tr><td>Parts &amp; Labor</td><td style=\'text-align:right;\'>$"+(parts+labor).toFixed(2)+"</td></tr>"'
     +     '+"<tr><td>Shop Supplies</td><td style=\'text-align:right;\'>$"+ss.toFixed(2)+"</td></tr>"'
     +     '+"<tr><td>Tax</td><td style=\'text-align:right;\'>$"+tax.toFixed(2)+"</td></tr>"'
     +     '+"<tr style=\'font-weight:700;font-size:1rem;border-top:2px solid #dde3ea;\'><td style=\'padding-top:8px;\'>Total</td><td style=\'text-align:right;padding-top:8px;\'>$"+tot.toFixed(2)+"</td></tr>"'
     +     '+"</table>"'
-    +     '+"<p>Includes all parts and labor. Qualifying pad and rotor replacements come with a <strong>12-month / 12,000-mile warranty</strong>.</p>"'
+    +     '+"<p>Includes all parts and labor. Qualifying pad and rotor replacements carry a <strong>12-month / 12,000-mile warranty</strong>.</p>"'
     +     '+"<p style=\'margin-top:8px;\'>We come to your home or office. No shop visit needed.</p>"'
     +     '+"<p style=\'margin-top:8px;\'>Reply to this email or call/text <strong>703-977-4475</strong> to confirm.</p>"'
     +     '+"</div>";'
     +   'box.style.display="block";'
     +   'document.getElementById("prevBtn").textContent="Hide Preview";'
     + '}'
+
     + 'calc();'
     + '</script>';
 
@@ -384,26 +421,24 @@ router.post('/quote/:id/send', requireAuth, express.urlencoded({ extended: false
   var lead = db.prepare('SELECT * FROM leads WHERE id = ?').get(req.params.id);
   if (!lead) return res.status(404).send('Lead not found');
 
-  var service      = req.body.service      || '';
-  var tier         = req.body.tier         || 'standard';
-  var partsLabor   = parseFloat(req.body.partsLabor)   || 0;
-  var shopSupplies = parseFloat(req.body.shopSupplies) || 0;
-  var taxRate      = parseFloat(req.body.taxRate)      || 0;
-  var taxAmt       = parseFloat(req.body.taxAmt)       || 0;
-  var totalAmt     = parseFloat(req.body.totalAmt)     || 0;
-  var vin          = req.body.vin           || null;
-  var internalNotes= req.body.internalNotes || null;
+  var service       = req.body.service       || '';
+  var tier          = req.body.tier          || 'standard';
+  var parts         = parseFloat(req.body.parts)         || 0;
+  var labor         = parseFloat(req.body.labor)         || 0;
+  var shopSupplies  = parseFloat(req.body.shopSupplies)  || 0;
+  var taxRate       = parseFloat(req.body.taxRate)       || 0;
+  var taxAmt        = parseFloat(req.body.taxAmt)        || 0;
+  var totalAmt      = parseFloat(req.body.totalAmt)      || 0;
+  var vin           = req.body.vin            || null;
+  var internalNotes = req.body.internalNotes  || null;
 
-  // Save quote to DB
   db.prepare(
-    'INSERT INTO quotes (lead_id, service, tier, price_parts_labor, shop_supplies, tax_rate, tax, total, vin, internal_notes, sent_at, status) '
-    + 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime(\'now\'), ?)'
-  ).run(lead.id, service, tier, partsLabor, shopSupplies, taxRate / 100, taxAmt, totalAmt, vin, internalNotes, lead.email ? 'sent' : 'saved');
+    'INSERT INTO quotes (lead_id, service, tier, price_parts, price_labor, shop_supplies, tax_rate, tax, total, vin, internal_notes, sent_at, status) '
+    + 'VALUES (?,?,?,?,?,?,?,?,?,?,?,datetime(\'now\'),?)'
+  ).run(lead.id, service, tier, parts, labor, shopSupplies, taxRate / 100, taxAmt, totalAmt, vin, internalNotes, lead.email ? 'sent' : 'saved');
 
-  // Update lead status
   db.prepare('UPDATE leads SET status = ? WHERE id = ?').run('quoted', lead.id);
 
-  // Skip email if no address on file
   if (!lead.email) return res.redirect('/admin?msg=saved');
 
   if (!process.env.SMTP_PASS) {
@@ -424,7 +459,7 @@ router.post('/quote/:id/send', requireAuth, express.urlencoded({ extended: false
       to:      lead.email,
       replyTo: 'greetings@brakeknights.com',
       subject: 'Your Brake Service Quote — Brake Knights',
-      html:    buildQuoteEmail(lead, service, tier, partsLabor, shopSupplies, taxAmt, totalAmt)
+      html:    buildQuoteEmail(lead, service, tier, parts, labor, shopSupplies, taxAmt, totalAmt)
     });
 
     res.redirect('/admin?msg=sent');
@@ -434,13 +469,12 @@ router.post('/quote/:id/send', requireAuth, express.urlencoded({ extended: false
   }
 });
 
-// ─── Quote email (basic — Phase 3C upgrades this to full branded template) ───
+// ─── Quote email (Phase 3C upgrades this to fully branded template) ───────────
 
-function buildQuoteEmail(lead, service, tier, partsLabor, shopSupplies, tax, total) {
-  var tierLabel = tier === 'premium' ? 'Premium' : 'Standard';
-  var vehicleBit = lead.vehicle
-    ? ' for your <strong>' + esc(lead.vehicle) + '</strong>'
-    : '';
+function buildQuoteEmail(lead, service, tier, parts, labor, shopSupplies, tax, total) {
+  var tierLabel   = tier === 'premium' ? 'Premium' : 'Standard';
+  var partsLabor  = parts + labor;
+  var vehicleBit  = lead.vehicle ? ' for your <strong>' + esc(lead.vehicle) + '</strong>' : '';
   return '<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#ffffff;">'
     + '<div style="background:#0a1f3d;padding:28px 32px;border-radius:8px 8px 0 0;text-align:center;">'
     + '<h1 style="color:#fff;margin:0 0 4px;font-size:1.4rem;">'

@@ -98,9 +98,12 @@ app.post('/api/contact', async (req, res) => {
 
       <!-- Body -->
       <div style="padding:32px;border:1px solid #e0e7ef;border-top:none;border-radius:0 0 8px 8px;">
-        <h2 style="color:#0a1f3d;margin:0 0 12px;font-size:1.2rem;">Hi ${firstName}, we got your message!</h2>
+        <h2 style="color:#0a1f3d;margin:0 0 12px;font-size:1.2rem;">Greetings ${firstName},</h2>
+        <p style="color:#444;line-height:1.6;margin:0 0 12px;">
+          Thanks for reaching out to Brake Knights. A knight is already reviewing your request.
+        </p>
         <p style="color:#444;line-height:1.6;margin:0 0 24px;">
-          Thanks for reaching out to Brake Knights. We'll review your information and get back to you shortly to discuss your brake service and provide a quote.
+          You'll receive a personalized quote specific to your vehicle and the service you need — typically within a few hours. Every quote is reviewed and sent by us directly, not generated automatically.
         </p>
 
         <!-- Request summary -->
@@ -119,8 +122,8 @@ app.post('/api/contact', async (req, res) => {
         <!-- What to expect -->
         <p style="color:#0a1f3d;font-weight:bold;margin:0 0 10px;font-size:0.95rem;">What happens next?</p>
         <ol style="color:#444;line-height:1.8;margin:0 0 24px;padding-left:20px;font-size:0.9rem;">
-          <li>We'll review your message and reach out by phone, text, or email to discuss your service and provide a quote.</li>
-          <li>Once you're happy with the quote, we'll schedule a time and location that works for you.</li>
+          <li>We review your request and send you a personalized quote by phone, text, or email.</li>
+          <li>Once you approve the quote, we schedule a time and location that works for you.</li>
           <li>Our knight comes to you — fully equipped, no shop visit needed.</li>
         </ol>
 
