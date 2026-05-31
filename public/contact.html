@@ -290,22 +290,22 @@
             <label for="service">Service Requested *</label>
             <select id="service" name="service" required onchange="handleServiceChange(this)">
               <option value="" disabled selected>Select a service...</option>
-              <option value="Front pads only">Front pads only</option>
-              <option value="Rear pads only">Rear pads only</option>
-              <option value="Front + rear pads">Front + rear pads</option>
-              <option value="Front pads + rotors">Front pads + rotors</option>
-              <option value="Rear pads + rotors">Rear pads + rotors</option>
-              <option value="Front + rear pads + rotors">Front + rear pads + rotors</option>
-              <option value="Front rotors only">Front rotors only</option>
-              <option value="Rear rotors only">Rear rotors only</option>
-              <option value="Front + rear rotors">Front + rear rotors</option>
-              <option value="Drums &amp; shoes">Drums &amp; shoes</option>
-              <option value="Front pads + rotors + drums &amp; shoes">Front pads + rotors + drums &amp; shoes</option>
-              <option value="Brake fluid flush">Brake fluid flush</option>
-              <option value="Brake inspection">Brake inspection</option>
-              <option value="Caliper replacement">Caliper replacement</option>
-              <option value="Brake hose replacement">Brake hose replacement</option>
-              <option value="Describe issue / Not sure">Describe issue / Not sure</option>
+              <option value="Front Pads Only">Front Pads Only</option>
+              <option value="Rear Pads Only">Rear Pads Only</option>
+              <option value="Front and Rear Pads">Front and Rear Pads</option>
+              <option value="Front Pads and Rotors">Front Pads and Rotors</option>
+              <option value="Rear Pads and Rotors">Rear Pads and Rotors</option>
+              <option value="Front and Rear Pads and Rotors">Front and Rear Pads and Rotors</option>
+              <option value="Front Rotors Only">Front Rotors Only</option>
+              <option value="Rear Rotors Only">Rear Rotors Only</option>
+              <option value="Front and Rear Rotors">Front and Rear Rotors</option>
+              <option value="Drums and Shoes">Drums and Shoes</option>
+              <option value="Front Pads, Rotors, and Drums and Shoes">Front Pads, Rotors, and Drums and Shoes</option>
+              <option value="Brake Fluid Flush">Brake Fluid Flush</option>
+              <option value="Brake Inspection">Brake Inspection</option>
+              <option value="Caliper Replacement">Caliper Replacement</option>
+              <option value="Brake Hose Replacement">Brake Hose Replacement</option>
+              <option value="Describe Issue / Not Sure">Describe Issue / Not Sure</option>
               <option value="Other">Other</option>
             </select>
           </div>
@@ -450,7 +450,7 @@
     const group = document.getElementById('message-group');
     const textarea = document.getElementById('message');
     const label = document.getElementById('message-label');
-    const freeform = val === 'Describe issue / Not sure' || val === 'Other';
+    const freeform = val === 'Describe Issue / Not Sure' || val === 'Other';
     group.style.display = val ? 'block' : 'none';
     if (freeform) {
       label.textContent = 'Describe your issue *';
