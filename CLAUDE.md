@@ -8,6 +8,8 @@
 The pre-push hook blocks all pushes to master by default.
 To override: user says **"go master"** in chat. Claude then runs the push with `MASTER_OVERRIDE="go master"` set as an env var.
 
+⛔ **`MASTER_OVERRIDE` is the USER'S keyword to give — NEVER set it unless the user typed "go master" in this chat turn. No exceptions. Not for urgent fixes. Not for hotfixes. Not for "it's already on dev." Ask first, always.**
+
 ## Skill/Tooling Push Override
 For changes that are dev tooling only (skills, hooks, scripts — nothing that affects the live site):
 User says **"go skill"** in chat. Claude merges the feature branch to BOTH `dev` and `master` in one operation, using `MASTER_OVERRIDE="go skill"`.
@@ -52,18 +54,20 @@ The API token is entered securely at session start — never hardcode it.
 
 1. ALL changes go to the feature branch ONLY
 2. After making changes: take a screenshot, show the user, then STOP and WAIT
-3. Do NOT merge to `dev` until the user explicitly says "push to dev" or "merge to dev" or "approved for dev"
-4. Do NOT merge to `master` under any circumstances without explicit user approval
+3. Do NOT merge to `dev` until the user explicitly says "push to dev" or "merge to dev" or "go dev"
+4. Do NOT merge to `master` under ANY circumstances without the user typing **"go master"** in chat
 5. "I won't do it again" is not enough — CHECK THIS LIST before every single merge
 6. ⛔ NEVER auto-merge to dev after a fix, even if it seems small or obvious
+7. ⛔ NEVER merge to master after a "go dev" — "go dev" means dev ONLY, full stop
+8. ⛔ NEVER decide master is safe to push to because "it's urgent" or "it's already on dev" — ALWAYS wait for "go master"
 
 THE WORKFLOW IS:
-  feature branch → show screenshot → WAIT FOR APPROVAL → then merge to dev
-  dev → WAIT FOR APPROVAL → then merge to master
+  feature branch → show screenshot → WAIT → user says "go dev" → merge to dev ONLY → STOP
+  WAIT → user says "go master" → merge to master
 
-There is NO shortcut. There is NO exception. Not even "just a small fix."
-ASKING "should I push to dev?" IS NOT ENOUGH — wait for the user to say it.
-- Current feature branch: `claude/dazzling-planck-U9GXQ`
+There is NO shortcut. There is NO exception. Not even "just a small fix." Not even a hotfix.
+"go dev" ≠ "go master". They are separate approvals. Always.
+- Current feature branch: `claude/compassionate-bardeen-pgOcq`
 
 ## Square Integration — Platform Build Plan
 
