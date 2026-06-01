@@ -4,9 +4,18 @@
 1. `git config core.hooksPath .githooks` — activates the master push block
 2. `git branch --show-current` — confirm you are on `claude/gallant-ptolemy-9gZLb` (or the current feature branch); if not, switch: `git checkout claude/gallant-ptolemy-9gZLb`
 
+## Master Branch Protection (Two Layers)
+Master is protected by two independent layers. Do not weaken or remove either without explicit user approval.
+
+**Layer 1: GitHub ruleset (server-side, primary).**
+A repository ruleset named "Protect master" targets the `master` branch on GitHub itself. It blocks direct pushes by non-admins, force pushes, and branch deletion. It cannot be bypassed locally (`--no-verify` does not affect it) and applies no matter what branch a session starts on. The repo owner (Repository admin) is on the bypass list, so the owner can still push directly to master to deploy. Confirm status anytime with `list_branches` — master reports `"protected": true`.
+
+**Layer 2: local pre-push hook (catches accidental admin pushes).**
+`.githooks/pre-push` blocks all pushes to master by default and is activated each session by `git config core.hooksPath .githooks` (run by the session-start hook). This is the safety net for the one gap Layer 1 leaves open: the owner accidentally pushing to master.
+
 ## Master Push Override
 The pre-push hook blocks all pushes to master by default.
-To override: user says **"go master"** in chat. Claude then runs the push with `MASTER_OVERRIDE="go master"` set as an env var.
+To override: user says **"go master"** in chat. Claude then runs the push with `MASTER_OVERRIDE="go master"` set as an env var. (This satisfies Layer 2; Layer 1 is satisfied separately by the owner's admin bypass.)
 
 ## Skill/Tooling Push Override
 For changes that are dev tooling only (skills, hooks, scripts — nothing that affects the live site):
