@@ -115,11 +115,13 @@ The long-term vision is a fully owned Brake Knights business platform. Square is
 ## Current Work in Progress
 Update this section at the end of each session to stay caught up next time.
 
-- Working branch: `claude/dazzling-planck-U9GXQ` — in sync with `dev` and `master` ✅
+- Working branch: `claude/compassionate-bardeen-pgOcq`
 - `dev` branch → dev.brakeknights.com (auto-deploy on push) ✅
 - `master` branch → brakeknights.com (live site, auto-deploy on push) ✅ — **site is live**
 - Form emails fully working on both dev and live: internal notification + customer confirmation ✅
 - Pre-push hook in place — direct pushes to `master` blocked; override with "go master" keyword ✅
+- **NEW hard-stop master gate:** `.claude/hooks/block-master-push.sh` is a PreToolUse(Bash) hook that forces ANY master push (or any command setting MASTER_OVERRIDE) into a user approval prompt the model cannot self-approve. Activates on session start / config reload. Closes the hole where the git hook trusted a MASTER_OVERRIDE that Claude could set itself.
+- **Feature branch `claude/compassionate-bardeen-pgOcq` has UNMERGED work pending review:** Square auto-booking on Approve (catalog.object.upsert fix applied — needs live retest), lead-history/service-tag/approve-deny UI, BK Admin tab title, the master-push gate, and 42 Search Console 404 fixes (trailing-slash + old-blog-slug 301 redirects — already merged to dev AND master earlier this session and confirmed working live).
 - "go skill" keyword added — pushes tooling-only changes to both dev and master in one shot ✅
 - Session startup hook shows pending dev-vs-master commits at session start ✅
 - Screenshot skill in place — `node scripts/screenshot.js [path] [selector]` ✅
