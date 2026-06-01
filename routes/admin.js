@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const db = require('../db');
 const PRICING = require('../pricing');
-const { client: squareClient } = require('../square');
+const { client: squareClient, createOrFindSquareCustomer } = require('../square');
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'brakeknights';
 
@@ -368,6 +368,46 @@ router.get('/square-info', requireAuth, async function(req, res) {
     }));
   } catch (e) { out.allCatalogItems = 'ERR: ' + e.message; }
   res.type('json').send(JSON.stringify(out, null, 2));
+});
+
+// ─── Sandbox-only test seed (temporary) ──────────────────────────────────────
+// Creates a ready-to-approve lead + accepted quote in one tap so the Square
+// booking flow can be tested with a single Approve click. Refuses to run outside
+// sandbox so it can never create junk leads on the live site.
+router.get('/seed-test-booking', requireAuth, async function(req, res) {
+  var isSandbox = process.env.SQUARE_ENV === 'sandbox' || !process.env.SQUARE_ACCESS_TOKEN;
+  if (!isSandbox) return res.status(403).send('Seed route is sandbox-only.');
+
+  // Preferred date: 7 days out at noon, in the pref_date (YYYY-MM-DD) / pref_time format.
+  var d = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  var prefDate = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  var prefTime = '12:00 PM';
+  var prefLocation = '43850 Heatherstone Ter';
+
+  var leadInfo = db.prepare(
+    "INSERT INTO leads (first_name, last_name, phone, email, vehicle, service, source, status) " +
+    "VALUES (?, ?, ?, ?, ?, ?, 'sandbox-test', 'quote_accepted')"
+  ).run('Sandbox', 'Tester', '7039774475', 'greetings@brakeknights.com', '2010 Mazda CX-7', 'Front Pads and Rotors');
+  var leadId = leadInfo.lastInsertRowid;
+
+  // Attach a sandbox Square customer so the booking has a customerId.
+  try {
+    var cust = await createOrFindSquareCustomer({
+      firstName: 'Sandbox', lastName: 'Tester', phone: '7039774475',
+      email: 'greetings@brakeknights.com', vehicle: '2010 Mazda CX-7', note: 'Sandbox test lead'
+    });
+    if (cust && cust.customerId) db.prepare('UPDATE leads SET square_customer_id = ? WHERE id = ?').run(cust.customerId, leadId);
+  } catch (e) { /* booking can still be attempted without a customer */ }
+
+  db.prepare(
+    "INSERT INTO quotes (lead_id, service, tier, total, accept_token, sent_at, accepted_at, pref_date, pref_time, pref_location, status) " +
+    "VALUES (?, 'Front Pads and Rotors', 'standard', 525.37, ?, datetime('now'), datetime('now'), ?, ?, ?, 'accepted')"
+  ).run(leadId, crypto.randomBytes(16).toString('hex'), prefDate, prefTime, prefLocation);
+
+  logHistory(leadId, 'Lead created', 'Sandbox test lead (seed)');
+  logHistory(leadId, 'Quote accepted by customer', prefDate + ' at ' + prefTime + ' — ' + prefLocation);
+
+  res.redirect('/admin/quote/' + leadId);
 });
 
 // ─── Approve / deny scheduling ────────────────────────────────────────────────
