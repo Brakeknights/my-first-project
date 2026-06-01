@@ -19,6 +19,40 @@ app.use(session({
   cookie: { maxAge: 8 * 60 * 60 * 1000 }
 }));
 
+// 301 redirects for old blog posts and old-format location URLs from previous site
+const OLD_REDIRECTS = {
+  '/benefits-and-drawbacks-of-mobile-mechanics':                                        '/blog',
+  '/havent-changed-your-brake-fluid-in-years-what-is-happening-to-your-brakes':        '/blog',
+  '/diy-brake-pad-replacement-when-to-roll-up-your-sleeves-and-when-to-call-the-pros': '/blog',
+  '/getting-back-on-the-road-how-long-will-it-take':                                   '/blog',
+  '/can-i-drive-with-80-worn-brake-pads':                                              '/blog',
+  '/7-common-diy-brake-repair-mistakes-avoid-these-by-hiring-a-pro':                   '/blog',
+  '/machining-rotors-when-to-replace-your-brakes-or-not':                              '/blog',
+  '/winter-brake-maintenance-protecting-your-cars-brakes-from-corrosion':              '/blog',
+  '/abs-explained-for-drivers-how-to-brake-without-skids':                             '/blog',
+  '/is-your-handbrake-light-on-even-when-released-heres-why':                         '/blog',
+  '/brake-pad-slapping-what-it-is-and-why-we-dont-do-it':                             '/blog',
+  '/what-is-the-30-30-30-rule-for-brakes':                                             '/blog',
+  '/what-is-the-30-60-90-rule-for-car-maintenance':                                    '/blog',
+  '/is-it-safe-to-repair-brakes-on-an-icy-or-frozen-driveway-winter-brake-repair-explained': '/blog',
+  '/car-brakes-squeal-when-its-cold-what-it-really-means-and-whats-causing-it':        '/blog',
+  '/how-long-should-normal-brake-pads-last':                                           '/blog',
+  '/mobile-brake-repair-springfield-va':  '/brake-repair-springfield',
+  '/mobile-brake-repair-annandale':       '/brake-repair-annandale',
+  '/mobile-brake-repair-aldie-va':        '/brake-repair-aldie',
+};
+
+// Strip trailing slashes and /feed suffixes, apply old-URL redirects — all as 301
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/')) return next();
+  let p = req.path;
+  if (p.endsWith('/') && p.length > 1) p = p.slice(0, -1);
+  if (p.endsWith('/feed')) p = p.replace(/\/feed$/, '');
+  const dest = OLD_REDIRECTS[p];
+  if (p !== req.path || dest) return res.redirect(301, dest || p);
+  next();
+});
+
 app.use('/admin', adminRouter);
 app.use('/quote', quoteRouter);
 app.use('/images', express.static(path.join(__dirname, 'public/images'), {
