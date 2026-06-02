@@ -364,7 +364,24 @@ router.post('/lead/:id/status', requireAuth, express.urlencoded({ extended: fals
   res.redirect(back);
 });
 
-// ─── Square setup diagnostics (temporary) ────────────────────────────────────
+// ─── Archive / restore (soft delete) ──────────────────────────────────────────
+// Soft archive keeps the lead, its quotes, and history for CRM lookups; archived
+// leads are just hidden from the working lists.
+router.post('/lead/:id/archive', requireAuth, express.urlencoded({ extended: false }), function(req, res) {
+  var lead = db.prepare('SELECT * FROM leads WHERE id = ?').get(req.params.id);
+  if (!lead) return res.status(404).send('Lead not found');
+  db.prepare("UPDATE leads SET archived = 1, archived_at = datetime('now') WHERE id = ?").run(lead.id);
+  logHistory(lead.id, 'Lead archived');
+  res.redirect(req.body.back || '/admin');
+});
+
+router.post('/lead/:id/restore', requireAuth, express.urlencoded({ extended: false }), function(req, res) {
+  var lead = db.prepare('SELECT * FROM leads WHERE id = ?').get(req.params.id);
+  if (!lead) return res.status(404).send('Lead not found');
+  db.prepare("UPDATE leads SET archived = 0, archived_at = NULL WHERE id = ?").run(lead.id);
+  logHistory(lead.id, 'Lead restored from archive');
+  res.redirect(req.body.back || '/admin?status=archived');
+});
 router.get('/square-info', requireAuth, async function(req, res) {
   const { client } = require('../square');
   const out = {};
@@ -541,18 +558,22 @@ router.get('/', requireAuth, function(req, res) {
 
   var leads;
   if (search) {
+    // Search spans everything (including archived) so old customers stay findable.
     leads = db.prepare(
       'SELECT * FROM leads WHERE (first_name || " " || last_name LIKE ? OR phone LIKE ? OR email LIKE ? OR vehicle LIKE ? OR service LIKE ?) ORDER BY id DESC'
     ).all(sp, sp, sp, sp, sp);
+  } else if (status === 'archived') {
+    leads = db.prepare('SELECT * FROM leads WHERE archived = 1 ORDER BY archived_at DESC, id DESC').all();
   } else if (status === 'all') {
-    leads = db.prepare('SELECT * FROM leads ORDER BY id DESC').all();
+    leads = db.prepare('SELECT * FROM leads WHERE archived = 0 ORDER BY id DESC').all();
   } else {
-    leads = db.prepare('SELECT * FROM leads WHERE status = ? ORDER BY id DESC').all(status);
+    leads = db.prepare('SELECT * FROM leads WHERE status = ? AND archived = 0 ORDER BY id DESC').all(status);
   }
 
-  var counts = db.prepare('SELECT status, COUNT(*) as n FROM leads GROUP BY status').all()
+  var counts = db.prepare('SELECT status, COUNT(*) as n FROM leads WHERE archived = 0 GROUP BY status').all()
     .reduce(function(acc, r) { acc[r.status] = r.n; return acc; }, {});
-  var total = db.prepare('SELECT COUNT(*) as n FROM leads').get().n;
+  var total = db.prepare('SELECT COUNT(*) as n FROM leads WHERE archived = 0').get().n;
+  var archivedCount = db.prepare('SELECT COUNT(*) as n FROM leads WHERE archived = 1').get().n;
 
   var tabs = [
     ['all',            'All',            total],
@@ -562,6 +583,7 @@ router.get('/', requireAuth, function(req, res) {
     ['quote_accepted', 'Quote Accepted', counts.quote_accepted || 0],
     ['booked',         'Booked',         counts.booked         || 0],
     ['completed',      'Completed',      counts.completed      || 0],
+    ['archived',       'Archived',       archivedCount         || 0],
   ];
 
   var tabsHtml = tabs.map(function(t) {
@@ -585,7 +607,8 @@ router.get('/', requireAuth, function(req, res) {
         var sched = (l.status === 'quote_accepted' || l.status === 'booked')
           ? db.prepare('SELECT * FROM quotes WHERE lead_id = ? AND accepted_at IS NOT NULL ORDER BY id DESC LIMIT 1').get(l.id)
           : null;
-        return '<div class="card">'
+        var backVal = '/admin?status=' + status + (search ? '&q=' + encodeURIComponent(search) : '');
+        return '<div class="card"' + (l.archived ? ' style="opacity:.72;"' : '') + '>'
           + '<div class="row-sb">'
           + '<div class="lead-name">' + esc(l.first_name) + ' ' + esc(l.last_name) + '</div>'
           + statusBadge(l.status)
@@ -599,16 +622,26 @@ router.get('/', requireAuth, function(req, res) {
           + '<a href="tel:' + esc(l.phone) + '" class="btn btn-outline btn-sm" style="width:auto;flex-shrink:0;">&#128222; Call</a>'
           + '<a href="/admin/quote/' + l.id + '" class="btn btn-navy btn-sm" style="flex:1;text-align:center;">Open Quote</a>'
           + '</div>'
-          + '<form method="POST" action="/admin/lead/' + l.id + '/status" style="margin-top:10px;display:flex;align-items:center;gap:8px;">'
-          + '<input type="hidden" name="back" value="/admin?status=' + status + (search ? '&q=' + encodeURIComponent(search) : '') + '">'
-          + '<label style="font-size:0.78rem;color:#aaa;font-weight:600;white-space:nowrap;">Status:</label>'
-          + '<select name="status" onchange="this.form.submit()" style="flex:1;padding:6px 8px;border:1.5px solid #dde3ea;border-radius:6px;font-size:0.82rem;color:#1a2a3a;background:#fff;">'
-          + ['new','quoted','follow_up','quote_accepted','booked','completed'].map(function(s) {
-              var label = { new:'New', quoted:'Quoted', follow_up:'Follow Up', quote_accepted:'Quote Accepted', booked:'Booked', completed:'Completed' }[s];
-              return '<option value="' + s + '"' + (l.status === s ? ' selected' : '') + '>' + label + '</option>';
-            }).join('')
-          + '</select>'
-          + '</form>'
+          + (l.archived
+              ? '<div style="margin-top:10px;display:flex;align-items:center;gap:8px;justify-content:space-between;">'
+                + '<span style="font-size:0.78rem;color:#aaa;">Archived' + (l.archived_at ? ' ' + timeAgo(l.archived_at) : '') + '</span>'
+                + '<form method="POST" action="/admin/lead/' + l.id + '/restore" style="margin:0;">'
+                + '<input type="hidden" name="back" value="' + backVal + '">'
+                + '<button type="submit" class="btn btn-outline btn-sm" style="width:auto;">&#8634; Restore</button>'
+                + '</form></div>'
+              : '<form method="POST" action="/admin/lead/' + l.id + '/status" style="margin-top:10px;display:flex;align-items:center;gap:8px;">'
+                + '<input type="hidden" name="back" value="' + backVal + '">'
+                + '<label style="font-size:0.78rem;color:#aaa;font-weight:600;white-space:nowrap;">Status:</label>'
+                + '<select name="status" onchange="this.form.submit()" style="flex:1;padding:6px 8px;border:1.5px solid #dde3ea;border-radius:6px;font-size:0.82rem;color:#1a2a3a;background:#fff;">'
+                + ['new','quoted','follow_up','quote_accepted','booked','completed'].map(function(s) {
+                    var label = { new:'New', quoted:'Quoted', follow_up:'Follow Up', quote_accepted:'Quote Accepted', booked:'Booked', completed:'Completed' }[s];
+                    return '<option value="' + s + '"' + (l.status === s ? ' selected' : '') + '>' + label + '</option>';
+                  }).join('')
+                + '</select></form>'
+                + '<form method="POST" action="/admin/lead/' + l.id + '/archive" style="margin-top:8px;" onsubmit="return confirm(\'Archive this lead? It stays saved for history and can be restored from the Archived tab.\');">'
+                + '<input type="hidden" name="back" value="' + backVal + '">'
+                + '<button type="submit" style="width:100%;background:none;border:none;color:#c0392b;font-size:0.8rem;font-weight:600;cursor:pointer;padding:4px;">&#128451; Archive lead</button>'
+                + '</form>')
           + '</div>';
       }).join('');
 

@@ -75,5 +75,7 @@ const addLeadCol = (name, def) => {
 };
 addLeadCol('status_updated_at',  'TEXT');
 addLeadCol('followup_sent',      'INTEGER DEFAULT 0');
+addLeadCol('archived',           'INTEGER DEFAULT 0');
+addLeadCol('archived_at',        'TEXT');
 
 module.exports = db;
