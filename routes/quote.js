@@ -222,6 +222,17 @@ router.get('/:id/:token', function(req, res) {
     return res.send(shell('Quote Accepted', acceptedConfirmation(q)));
   }
 
+  // Google Places address autocomplete is enabled only when an API key is set.
+  // Until then the address field is a plain text input.
+  var mapsKey = process.env.GOOGLE_MAPS_API_KEY || '';
+  var addressAutocomplete = mapsKey
+    ? '<script>function initBkAddr(){var input=document.getElementById("prefLocation");if(!input||!window.google||!google.maps||!google.maps.places)return;'
+      + 'var ac=new google.maps.places.Autocomplete(input,{fields:["formatted_address"],componentRestrictions:{country:"us"},types:["address"]});'
+      + 'ac.addListener("place_changed",function(){var p=ac.getPlace();if(p&&p.formatted_address){input.value=p.formatted_address;}});'
+      + 'input.addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();}});}</script>'
+      + '<script src="https://maps.googleapis.com/maps/api/js?key=' + encodeURIComponent(mapsKey) + '&libraries=places&loading=async&callback=initBkAddr" async></script>'
+    : '';
+
   var body = '<div class="card">'
     + '<h1>Greetings ' + esc(q.first_name) + ',</h1>'
     + '<p>Your quote is ready. Review the details below, choose a preferred day and time, and accept. We&rsquo;ll confirm your appointment or reach out about other openings.</p>'
@@ -237,7 +248,7 @@ router.get('/:id/:token', function(req, res) {
     + '<select name="prefTime" required>' + buildTimeOptions() + '</select></div>'
     + '</div>'
     + '<div class="form-group"><label>Service address</label>'
-    + '<input type="text" name="prefLocation" placeholder="Where should we meet you? Home or work address" required></div>'
+    + '<input type="text" id="prefLocation" name="prefLocation" placeholder="Where should we meet you? Home or work address" autocomplete="off" required></div>'
     + '<div class="form-group"><label>Anything else? <span style="color:#aab;font-weight:400;">(optional)</span></label>'
     + '<textarea name="schedulingNotes" placeholder="Gate codes, second choice of time, parking notes…"></textarea></div>'
     + '<button type="submit" class="btn btn-blue">Accept Quote &amp; Request This Time</button>'
@@ -267,7 +278,8 @@ router.get('/:id/:token', function(req, res) {
     +   'dateEl.addEventListener("change",capTimes);'
     +   'capTimes();'
     + '})();'
-    + '</script>';
+    + '</script>'
+    + addressAutocomplete;
 
   res.send(shell('Your Quote', body));
 });
