@@ -755,6 +755,7 @@ router.get('/quote/:id', requireAuth, function(req, res) {
     + serviceCheckboxes
     + '<button type="button" class="svc-clear-btn" onclick="clearServices()">&#10005; Clear selection</button>'
     + '<div class="svc-tags" id="svcTags"></div>'
+    + '<div id="customQuoteHint" style="display:none;background:#fff8e1;border:1px solid #f0d080;border-radius:8px;padding:10px 12px;margin-top:10px;font-size:0.83rem;color:#7a5a00;"></div>'
     + '</div>'
 
     + '<div class="form-group"><label>Tier</label>'
@@ -846,6 +847,7 @@ router.get('/quote/:id', requireAuth, function(req, res) {
     +   'document.getElementById("labor").value="0.00";'
     +   'document.getElementById("ss").value="0.00";'
     +   'renderTags();'
+    +   'updateServiceHints([]);'
     +   'calc();'
     + '}'
 
@@ -856,16 +858,27 @@ router.get('/quote/:id', requireAuth, function(req, res) {
     +   'var totParts=0,totLabor=0,totSS=0;'
     +   'names.forEach(function(svc){'
     +     'if(!PRICING[svc])return;'
-    +     'var p=PRICING[svc][tier];'
+    +     'var p=PRICING[svc][tier]||PRICING[svc].standard;' // fall back to standard when tier missing
     +     'if(!p)return;'
     +     'totParts+=p.parts;totLabor+=p.labor;totSS+=p.shopSupplies;'
     +   '});'
     +   'renderTags();'
+    +   'updateServiceHints(names);'
     +   'if(names.length===0)return;'
     +   'document.getElementById("parts").value=totParts.toFixed(2);'
     +   'document.getElementById("labor").value=totLabor.toFixed(2);'
     +   'document.getElementById("ss").value=totSS.toFixed(2);'
     +   'calc();'
+    + '}'
+
+    // Shows custom-quote reminders and any service-specific notes (e.g. inspection fee policy)
+    + 'function updateServiceHints(names){'
+    +   'var msgs=[];'
+    +   'var custom=names.filter(function(n){return PRICING[n]&&PRICING[n].customQuote;});'
+    +   'if(custom.length){msgs.push("<strong>Custom quote:</strong> "+custom.join(", ")+" "+(custom.length>1?"have":"has")+" no preset price. Look up the exact part(s) and enter Parts and Labor manually.");}'
+    +   'names.forEach(function(n){if(PRICING[n]&&PRICING[n].note){msgs.push(PRICING[n].note);}});'
+    +   'var box=document.getElementById("customQuoteHint");'
+    +   'if(msgs.length){box.innerHTML=msgs.join("<br><br>");box.style.display="block";}else{box.style.display="none";}'
     + '}'
 
     // Tax is on parts + shop supplies only (not labor — Virginia law)
@@ -914,6 +927,7 @@ router.get('/quote/:id', requireAuth, function(req, res) {
     +     '+"<tr><td>Tax</td><td style=\'text-align:right;\'>$"+tax.toFixed(2)+"</td></tr>"'
     +     '+"<tr style=\'font-weight:700;font-size:1rem;border-top:2px solid #dde3ea;\'><td style=\'padding-top:8px;\'>Total</td><td style=\'text-align:right;padding-top:8px;\'>$"+tot.toFixed(2)+"</td></tr>"'
     +     '+"</table>"'
+    +     '+svcNames.map(function(s){return PRICING[s]&&PRICING[s].note;}).filter(Boolean).map(function(n){return "<p style=\'color:#7a5a00;background:#fff8e1;border:1px solid #f0d080;border-radius:6px;padding:8px 10px;font-size:0.85rem;\'>"+n+"</p>";}).join("")'
     +     '+"<p>Includes all parts and labor. Qualifying pad and rotor replacements carry a <strong>12-month / 12,000-mile warranty</strong>.</p>"'
     +     '+"<p style=\'margin-top:8px;\'>We come to your home or office. No shop visit needed.</p>"'
     +     '+"<p style=\'margin-top:8px;\'>Reply to this email or call/text <strong>703-977-4475</strong> to confirm.</p>"'
@@ -926,6 +940,7 @@ router.get('/quote/:id', requireAuth, function(req, res) {
     // already auto-filled from the lead, populate prices from the pricing table.
     // Otherwise just total up the saved/edited values without overwriting them.
     + (allQuotes.length === 0 && currentServices.length > 0 ? 'updatePrices();' : 'calc();')
+    + 'updateServiceHints(Array.from(document.querySelectorAll(".svc-cb:checked")).map(function(c){return c.value;}));'
     + 'renderTags();'
     + '</script>';
 
@@ -1021,6 +1036,9 @@ function buildQuoteEmail(lead, service, tier, parts, labor, shopSupplies, tax, t
     + '<tr style="border-top:2px solid #dde3ea;"><td style="padding:10px 0 0;font-weight:700;font-size:1rem;color:#0a1f3d;">Total</td>'
     + '<td style="text-align:right;padding:10px 0 0;font-weight:700;font-size:1.1rem;color:#0a1f3d;">$' + total.toFixed(2) + '</td></tr>'
     + '</table></div>'
+    + service.split(', ').map(function(s) { var sv = PRICING.services[s.trim()]; return (sv && sv.note) ? sv.note : null; }).filter(Boolean).map(function(n) {
+        return '<p style="color:#7a5a00;background:#fff8e1;border:1px solid #f0d080;border-radius:8px;padding:12px 14px;line-height:1.55;margin:0 0 20px;font-size:0.86rem;">' + esc(n) + '</p>';
+      }).join('')
     + '<p style="color:#444;line-height:1.6;margin:0 0 12px;font-size:0.9rem;">This quote includes all parts and labor. All qualifying pad and rotor replacements come with a <strong>12-month / 12,000-mile warranty</strong> on parts and labor.</p>'
     + '<p style="color:#444;line-height:1.6;margin:0 0 24px;font-size:0.9rem;">Our service is fully mobile. We come directly to your home or office. No shop visit needed.</p>'
     // Primary CTA — accept the quote and pick a preferred time in one step
