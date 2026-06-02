@@ -3,6 +3,13 @@ const router = express.Router();
 const nodemailer = require('nodemailer');
 const db = require('../db');
 const { toEasternRfc3339 } = require('../datetime');
+const pricing = require('../pricing');
+
+// On-site duration (minutes) for a service, falling back to the default.
+function serviceMinutes(service) {
+  var svc = pricing.services[service];
+  return (svc && svc.minutes) || pricing.defaultMinutes || 60;
+}
 
 // Formats a JS Date as an ICS UTC timestamp, e.g. 20260608T160000Z.
 function icsUtc(d) {
@@ -168,7 +175,7 @@ router.get('/:id/:token/calendar.ics', function(req, res) {
   var startRfc = toEasternRfc3339(q.pref_date, q.pref_time);
   if (!startRfc) return res.status(404).send('Appointment time unavailable.');
   var start = new Date(startRfc);
-  var end = new Date(start.getTime() + 90 * 60 * 1000); // 90-minute service window
+  var end = new Date(start.getTime() + serviceMinutes(q.service) * 60 * 1000); // per-service block
 
   var summary = 'Brake Knights — ' + (q.service || 'Brake Service');
   var desc = 'Mobile brake service' + (q.service ? ' (' + q.service + ')' : '')
