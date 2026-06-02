@@ -2,11 +2,11 @@
 // parts: cost of parts only (tax is calculated on parts + shopSupplies).
 // labor: cost of labor only (not taxed in Virginia).
 // shopSupplies: flat shop supply fee (taxed).
-// taxRate: applied to (parts + shopSupplies). Virginia rate = 7% (6% state + 1% NVTA).
+// taxRate: applied to (parts + shopSupplies). Virginia rate = 6%.
 // minutes: on-site service duration, used to set the calendar block-off length.
 
 module.exports = {
-  taxRate: 0.07,
+  taxRate: 0.06,
   defaultMinutes: 60, // fallback when a service has no explicit duration
   services: {
     'Front Pads': {

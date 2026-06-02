@@ -409,7 +409,7 @@ router.get('/seed-test-lead', requireAuth, function(req, res) {
 
   db.prepare(
     "INSERT INTO quotes (lead_id, service, tier, total, accept_token, sent_at, accepted_at, pref_date, pref_time, pref_location, status) "
-    + "VALUES (?, 'Front Pads and Rotors', 'standard', 525.37, ?, datetime('now'), datetime('now'), ?, '11:00 AM', '43850 Heatherstone Ter', 'accepted')"
+    + "VALUES (?, 'Front Pads and Rotors', 'standard', 522.46, ?, datetime('now'), datetime('now'), ?, '11:00 AM', '43850 Heatherstone Ter', 'accepted')"
   ).run(leadId, crypto.randomBytes(16).toString('hex'), prefDate);
 
   logHistory(leadId, 'Lead created', 'Sandbox test lead (seed)');
